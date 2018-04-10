@@ -11,14 +11,17 @@ protected:
 public:
 	int id;
 	int tipo;
+	void contar();
+	int n_cobertos;
 	int k;
 	int *tamanhos;
 	double cap;
-	int n_cobertos;
 	bool contem(int tam);
 };
 
 bool operator== (const Padrao &c1, const Padrao &c2);
 
 bool operator< (const Padrao &c1, const Padrao &c2);
+
+bool operator> (const Padrao &c1, const Padrao &c2);
 

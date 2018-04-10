@@ -9,9 +9,19 @@ bool operator== (const Padrao &c1, const Padrao &c2) {
 	return true;
 }
 bool operator< (const Padrao &c1, const Padrao &c2) {
-	return (c1.id < c2.id);
+	return (c1.n_cobertos < c2.n_cobertos);
 }
 
+bool operator> (const Padrao &c1, const Padrao &c2) {
+	return (c1.n_cobertos > c2.n_cobertos);
+}
+
+
+void Padrao::contar() {
+	n_cobertos = 0;
+	for (int i = 0; i < k; i++)
+		if (tamanhos[i] > 0) { n_cobertos++; }
+}
 //Calcula o numero de tamanhos cobertos pelo padrao
 void Padrao::gerar_cobertos(int k) {
 	n_cobertos = 0;

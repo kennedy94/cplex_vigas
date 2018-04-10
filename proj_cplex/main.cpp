@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
 	Problema_Vigas	Prob(inst, xu);
 	Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
 
+
 	getchar();
 	return 0;
 }

@@ -20,13 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Modelo.cpp" />
     <ClCompile Include="Padrao.cpp" />
     <ClCompile Include="Problema_Vigas.cpp" />
     <ClCompile Include="Tipo_Viga.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Modelo.h" />
     <ClInclude Include="Padrao.h" />
     <ClInclude Include="Problema_Vigas.h" />
     <ClInclude Include="Tipo_Viga.h" />
@@ -39,6 +37,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>proj_cplex</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>cplex_vigas</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

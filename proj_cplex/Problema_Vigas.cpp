@@ -49,6 +49,7 @@ Problema_Vigas::Problema_Vigas(const char* filename, const char* filename2) {
 		}
 		Pattern[i].cap = capa;
 		Pattern[i].k = Viga[Pattern[i].tipo].k;
+		Pattern[i].contar();
 
 	}
 	padroes.close();
@@ -79,19 +80,26 @@ bool Problema_Vigas::cobre(list<Padrao> conj, int tipo, int tamanho) {
 
 list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	list<Padrao> conjunto;
+	list<Padrao> conjunto2;
+	
+	for (int i = 0; i < P; i++)
+		conjunto2.push_back(Padroes_Par[i]);
+		
+	conjunto2.sort(operator>);	//ordena em ordem descrescente de numero de padroes cobertos
+
 	Padrao *Padroes_ret;
 	for (int c = 0; c < C; c++){
 		for (int tam = 0; tam < Viga[c].k; tam++){
 			if (!cobre(conjunto, c, tam)) {
-				for (int i = 0; i < P; i++){
-					if (Padroes_Par[i].contem(tam) && Padroes_Par[i].tipo == c) {
-						conjunto.push_back(Padroes_Par[i]);
+				for (auto elemento: conjunto2){
+					if (elemento.contem(tam) && elemento.tipo == c) {
+						conjunto.push_back(elemento);
 					}
 				}
 			}
 		}
 	}
-
+	conjunto.push_front(Padroes_Par[0]);
 	conjunto.unique();
 	cout << conjunto.size() << endl;
 	
