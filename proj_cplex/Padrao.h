@@ -17,6 +17,7 @@ public:
 	int *tamanhos;
 	double cap;
 	bool contem(int tam);
+
 };
 
 bool operator== (const Padrao &c1, const Padrao &c2);
@@ -24,4 +25,5 @@ bool operator== (const Padrao &c1, const Padrao &c2);
 bool operator< (const Padrao &c1, const Padrao &c2);
 
 bool operator> (const Padrao &c1, const Padrao &c2);
+bool operador_padrao(const Padrao &c1, const Padrao &c2);
 

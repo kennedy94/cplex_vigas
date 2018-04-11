@@ -16,6 +16,9 @@ bool operator> (const Padrao &c1, const Padrao &c2) {
 	return (c1.n_cobertos > c2.n_cobertos);
 }
 
+bool operador_padrao (const Padrao &c1, const Padrao &c2) {
+	return (c1.n_cobertos > c2.n_cobertos);
+}
 
 void Padrao::contar() {
 	n_cobertos = 0;
