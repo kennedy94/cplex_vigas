@@ -19,16 +19,19 @@ protected:
 	Tipo_Viga *Viga;
 	Padrao *Pattern; 
 	int P; //#padroes
+	int P_antigo;
 	
 private:
 	IloEnv env;
 	IloModel model;
 	IloCplex cplex;
-	IloArray<IloArray<IloBoolVarArray> > x;          //1 se o padrao 'i' comeca na forma 'm' no dia 't'
+	IloArray<IloArray<IloBoolVarArray> > x;          //1 se o padrao 'i' comeca na forma 'm' no periodo 't'
 	IloBoolVarArray z;
+	int numvar, numvarP;
+
 
 	bool relaxacaolinear;
-	int numvar, numvarP;
+	
 
 	void iniciar_variaveis();
 
@@ -63,21 +66,23 @@ private:
 	void iniciar_lp(int fo, ofstream& resultados);
 
 
+
 	
 
 public:
-	void RODAR(int fo);
 
+	void RODAR(int fo);
+	
 	Problema_Vigas(const char* filename, const char* filename2);
 	void Substituir_Padroes(list<Padrao>);
 	list<Padrao> gerar_conj(Padrao *Conjunto);
-	bool cobre(list<Padrao> conj, int tipo, int tamanho);
+	int cobre(list<Padrao> conj, int tipo, int tamanho);
 	
 	int get_P();
 	int get_C();
 	Padrao *get_Padroes();
 	Tipo_Viga *get_Tipos();
-
+	
 
 	~Problema_Vigas();
 };

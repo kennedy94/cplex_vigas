@@ -24,6 +24,7 @@ Problema_Vigas::Problema_Vigas(const char* filename, const char* filename2) {
 	ifstream instancia(filename, ifstream::in);
 	if (instancia.fail()) {
 		cerr << "     Arquivo \"" << filename << "\" nao encontrado." << endl;
+		getchar();
 		exit(1);
 	}
 	instancia_nome = filename;
@@ -84,14 +85,15 @@ Tipo_Viga* Problema_Vigas::get_Tipos() {
 	return Viga;
 }
 
-bool Problema_Vigas::cobre(list<Padrao> conj, int tipo, int tamanho) {
+int Problema_Vigas::cobre(list<Padrao> conj, int tipo, int tamanho) {
 	if (conj.empty())
-		return false;
+		return 0;
+	int conta = 0;
 	for (auto elemento : conj)
-		if (elemento.tipo == tipo & elemento.tamanhos[tamanho] > 0) 
-			return true;
+		if (elemento.tipo == tipo & elemento.tamanhos[tamanho] > 0)
+			conta++;
 		
-	return false;
+	return conta;
 }
 
 list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
@@ -105,28 +107,31 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 
 	Padrao *Padroes_ret;
 	int contador = 0;
-	for (auto elemento : conjunto2) {
-		conjunto.push_back(elemento);
-		contador++;
-		if (contador > P / 10)
-			break;
+	//for (auto elemento : conjunto2) {
+	//	if (elemento.n_cobertos == elemento.k){
+	//		conjunto.push_back(elemento);
+	//		contador++;
+	//	}
+	//	/*if (contador > P / 10)
+	//		break;*/
+	//}
 
-	}
-
-	/*for (int c = 0; c < C; c++){
+	for (int c = 0; c < C; c++){
 		for (int tam = 0; tam < Viga[c].k; tam++){
-			if (!cobre(conjunto, c, tam)) {
-				for (auto elemento: conjunto2){
+			for (auto elemento: conjunto2){
+				if (cobre(conjunto, c, tam) < 50) {
 					if (elemento.contem(tam) && elemento.tipo == c) {
 						conjunto.push_back(elemento);
-						break;
+						contador++;
+						//break;
 					}
 				}
 			}
 		}
-	}*/
+	}
+	
 
-	for (int c = 0; c < C; c++) {
+	/*for (int c = 0; c < C; c++) {
 		for (int tam = 0; tam < Viga[c].k; tam++) {
 			contador = 0;
 			for (auto elemento : conjunto2) {
@@ -144,10 +149,16 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 				}
 			}
 		}
-	}
+	}*/
 	
 	conjunto.push_front(Padroes_Par[0]);
 	conjunto.unique();
+	for (auto elemento : conjunto) {
+		cout << elemento.tipo << "\t";
+		for (int i = 0; i < elemento.k; i++)
+			cout << elemento.tamanhos[i] << " ";
+		cout << endl;
+	}
 
 	cout << conjunto.size() << endl;
 	
@@ -155,6 +166,7 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 }
 
 void Problema_Vigas::Substituir_Padroes(list<Padrao> lista) {
+	P_antigo = P;
 	delete Pattern;
 	Pattern = new Padrao[lista.size()];
 	P = lista.size();
@@ -398,8 +410,8 @@ void Problema_Vigas::resolver_linear() {
 void Problema_Vigas::revolver_ppl() {
 	//cplex.setParam(IloCplex::PreInd, 0); Desligar presolve(NAO FACA ISSO DE NOVO!)
 
-	cout << "Variaveis sem preprocessamento: " << numvar << endl;
-	cout << "Variaveis com preprocessamento: " << numvarP << endl << endl;
+	cout << "Numero de padroes maximais: " << P_antigo << endl;
+	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
 	cplex.setParam(IloCplex::TiLim, 3600);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
@@ -566,6 +578,7 @@ bool Problema_Vigas::maximal(const Padrao P, double C_FORMA) {
 
 
 }
+
 //pseudo-funcao de verificacao
 bool Problema_Vigas::verificacao() {
 	//----------------------------------------------------------------------
@@ -622,6 +635,7 @@ bool Problema_Vigas::verificacao() {
 
 	return true;
 }
+
 void Problema_Vigas::iniciar_lp(int fo, ofstream& resultados) {
 	try {
 		relaxacaolinear = false;
