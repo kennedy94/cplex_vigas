@@ -76,8 +76,22 @@ public:
 	Problema_Vigas(const char* filename, const char* filename2);
 	void Substituir_Padroes(list<Padrao>);
 	list<Padrao> gerar_conj(Padrao *Conjunto);
+
+	//Número de vezes em que o conjunto conj cobre o tamanho tamanho do tipo tipo o_O
 	int cobre(list<Padrao> conj, int tipo, int tamanho);
-	
+
+	bool cobre_tudo_kvezes(list<Padrao> conj, int vezes);
+
+
+
+	//Computar número de tamanhos não cobertos que o padrão pat cobre
+
+	int cobre_naocobertos(list<Padrao> conj, Padrao pat, int n_vezes);
+
+
+
+
+
 	int get_P();
 	int get_C();
 	Padrao *get_Padroes();

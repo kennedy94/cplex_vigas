@@ -20,6 +20,11 @@ bool operador_padrao (const Padrao &c1, const Padrao &c2) {
 	return (c1.n_cobertos > c2.n_cobertos);
 }
 
+bool operador_padrao_naocobertos(const Padrao &c1, const Padrao &c2) {
+	return (c1.n_cobre_naocobertos > c2.n_cobre_naocobertos);
+}
+
+
 void Padrao::contar() {
 	n_cobertos = 0;
 	for (int i = 0; i < k; i++)

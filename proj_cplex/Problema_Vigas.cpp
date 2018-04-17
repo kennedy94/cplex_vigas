@@ -96,17 +96,62 @@ int Problema_Vigas::cobre(list<Padrao> conj, int tipo, int tamanho) {
 	return conta;
 }
 
+bool Problema_Vigas::cobre_tudo_kvezes(list<Padrao> conj, int vezes) {
+	if (conj.empty())
+		return false;
+
+	for (int c = 0; c < C; c++)
+		for (int tam = 0; tam < Viga[c].k; tam++)
+			if (cobre(conj, c, tam) < vezes)
+				return false;
+
+	return true;
+}
+
+int Problema_Vigas::cobre_naocobertos(list<Padrao> conj, Padrao pat, int n_vezes) {
+
+	int contador = 0;
+
+	for (int i = 0; i < pat.k; i++)
+		if(cobre(conj, pat.tipo, i) < n_vezes)
+			if (pat.tamanhos[i] > 0) {
+				contador++;
+			}
+
+	return contador;
+}
+
+
+
+
 list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	list<Padrao> conjunto;
 	list<Padrao> conjunto2;
 	
-	for (int i = 0; i < P; i++)
+	for (int i = 0; i < P; i++) {
+		Padroes_Par[i].n_cobre_naocobertos = cobre_naocobertos(conjunto, Padroes_Par[i], 10);
+		Padroes_Par[i].n_cobre_naocobertos;
 		conjunto2.push_back(Padroes_Par[i]);
-		
-	conjunto2.sort(operador_padrao);	//ordena em ordem descrescente de numero de padroes cobertos
+	}
+	//conjunto2.sort(operador_padrao);	//ordena em ordem descrescente de numero de padroes cobertos
+
+
+	conjunto2.sort(operador_padrao_naocobertos);
+
+	int contador = 0;
+	while (!cobre_tudo_kvezes(conjunto, 10))
+	{
+		conjunto.push_back(conjunto2.front());
+		conjunto2.pop_front();
+		for(auto elemento: conjunto2)
+			elemento.n_cobre_naocobertos = cobre_naocobertos(conjunto, elemento, 10);
+		conjunto2.sort(operador_padrao_naocobertos);
+		contador++;
+	}
+
 
 	Padrao *Padroes_ret;
-	int contador = 0;
+	
 	//for (auto elemento : conjunto2) {
 	//	if (elemento.n_cobertos == elemento.k){
 	//		conjunto.push_back(elemento);
@@ -116,20 +161,20 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	//		break;*/
 	//}
 
-	for (int c = 0; c < C; c++){
-		for (int tam = 0; tam < Viga[c].k; tam++){
-			for (auto elemento: conjunto2){
-				if (cobre(conjunto, c, tam) < 50) {
-					if (elemento.contem(tam) && elemento.tipo == c) {
-						conjunto.push_back(elemento);
-						contador++;
-						//break;
-					}
-				}
-			}
-		}
-	}
-	
+	//for (int c = 0; c < C; c++){
+	//	for (int tam = 0; tam < Viga[c].k; tam++){
+	//		for (auto elemento: conjunto2){
+	//			if (cobre(conjunto, c, tam) < 50) {
+	//				if (elemento.contem(tam) && elemento.tipo == c) {
+	//					conjunto.push_back(elemento);
+	//					contador++;
+	//					//break;
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+	//
 
 	/*for (int c = 0; c < C; c++) {
 		for (int tam = 0; tam < Viga[c].k; tam++) {
@@ -409,7 +454,7 @@ void Problema_Vigas::resolver_linear() {
 }
 void Problema_Vigas::revolver_ppl() {
 	//cplex.setParam(IloCplex::PreInd, 0); Desligar presolve(NAO FACA ISSO DE NOVO!)
-
+	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
 	cplex.setParam(IloCplex::TiLim, 3600);
@@ -425,7 +470,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	else
 		resultados << "	" << cplex.getObjValue() << "	" << cplex.getNnodes() << "	" << cplex.getMIPRelativeGap();
 
-
+	return;
 	cplex.out() << "Status da solucao = " << cplex.getStatus() << endl;
 	cplex.out() << "Valor Otimo  = " << cplex.getObjValue() << endl;
 	cplex.out() << "#Iteracoes = " << cplex.getNiterations() << endl;
@@ -691,11 +736,35 @@ Problema_Vigas::~Problema_Vigas()
 
 void Problema_Vigas::RODAR(int fo) {
 	ofstream resultados;
-	resultados.open("resultados.txt", fstream::app);
 	double time;
 	resultados << std::fixed;
 	resultados << std::setprecision(4);
 	resultados.open("resultados.txt", fstream::app);
+	resultados << endl;
+	resultados << instancia_nome << "\t";
+	try {
+		iniciar_variaveis();
+		cout << "\n\n\nResolvendo Linear... \n\n";
+		iniciar_lp(fo, resultados);
+		//exportar_lp();                   //criar arquivo .lp
+
+		timeused(NULL);
+		resolver_linear();                    //resolver problema
+		timeused(&time);
+
+		cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << time << endl;
+		
+
+	}
+	catch (...) {
+		cerr << endl << "\n Erro na resolucao da inteira" << endl;
+	}
+	/*imprimir_solucao(resultados);
+	resultados << "	" << time;*/
+
+	resultados.close();
+	resultados.open("resultados.txt", fstream::app);
+
 	try {
 		iniciar_variaveis();
 		cout << "\n\n\nResolvendo Inteira... \n\n";
@@ -707,12 +776,13 @@ void Problema_Vigas::RODAR(int fo) {
 		timeused(&time);
 
 		cout << "\n\nTempo Resolucao do CPLEX gasto (Solucao Inteira): " << time << endl;
-		imprimir_solucao(resultados);
-		resultados << "	" << time;
 	}
 	catch (...) {
 		cerr << endl << "\n Erro na resolucao da inteira" << endl;
 	}
+	imprimir_solucao(resultados);
+	resultados << "	" << time;
+
 	resultados << endl;
 
 	resultados.close();
