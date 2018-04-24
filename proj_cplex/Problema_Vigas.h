@@ -27,6 +27,7 @@ private:
 	IloCplex cplex;
 	IloArray<IloArray<IloBoolVarArray> > x;          //1 se o padrao 'i' comeca na forma 'm' no periodo 't'
 	IloBoolVarArray z;
+	//IloIntVar z;
 	int numvar, numvarP;
 
 

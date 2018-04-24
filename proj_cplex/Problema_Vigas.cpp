@@ -130,16 +130,15 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	
 	for (int i = 0; i < P; i++) {
 		Padroes_Par[i].n_cobre_naocobertos = cobre_naocobertos(conjunto, Padroes_Par[i], 10);
-		Padroes_Par[i].n_cobre_naocobertos;
 		conjunto2.push_back(Padroes_Par[i]);
 	}
-	//conjunto2.sort(operador_padrao);	//ordena em ordem descrescente de numero de padroes cobertos
+	conjunto2.sort(operador_padrao);	//ordena em ordem descrescente de numero de padroes cobertos
 
 
-	conjunto2.sort(operador_padrao_naocobertos);
+	//conjunto2.sort(operador_padrao_naocobertos);
 
 	int contador = 0;
-	while (!cobre_tudo_kvezes(conjunto, 10))
+	/*while (!cobre_tudo_kvezes(conjunto, 10))
 	{
 		conjunto.push_back(conjunto2.front());
 		conjunto2.pop_front();
@@ -147,19 +146,19 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 			elemento.n_cobre_naocobertos = cobre_naocobertos(conjunto, elemento, 10);
 		conjunto2.sort(operador_padrao_naocobertos);
 		contador++;
-	}
+	}*/
 
 
 	Padrao *Padroes_ret;
 	
-	//for (auto elemento : conjunto2) {
-	//	if (elemento.n_cobertos == elemento.k){
-	//		conjunto.push_back(elemento);
-	//		contador++;
-	//	}
-	//	/*if (contador > P / 10)
-	//		break;*/
-	//}
+	for (auto elemento : conjunto2) {
+		if (elemento.n_cobertos == elemento.k){
+			conjunto.push_back(elemento);
+			contador++;
+		}
+		/*if (contador > P / 10)
+			break;*/
+	}
 
 	//for (int c = 0; c < C; c++){
 	//	for (int tam = 0; tam < Viga[c].k; tam++){
@@ -174,7 +173,7 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	//		}
 	//	}
 	//}
-	//
+	
 
 	/*for (int c = 0; c < C; c++) {
 		for (int tam = 0; tam < Viga[c].k; tam++) {
@@ -198,12 +197,12 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	
 	conjunto.push_front(Padroes_Par[0]);
 	conjunto.unique();
-	for (auto elemento : conjunto) {
-		cout << elemento.tipo << "\t";
-		for (int i = 0; i < elemento.k; i++)
-			cout << elemento.tamanhos[i] << " ";
-		cout << endl;
-	}
+	//for (auto elemento : conjunto) {
+	//	cout << elemento.tipo << "\t";
+	//	for (int i = 0; i < elemento.k; i++)
+	//		cout << elemento.tamanhos[i] << " ";
+	//	cout << endl;
+	//}
 
 	cout << conjunto.size() << endl;
 	
@@ -229,6 +228,7 @@ void Problema_Vigas::Substituir_Padroes(list<Padrao> lista) {
 //----------------------------------------------------------------
 void Problema_Vigas::iniciar_variaveis() {
 	z = IloBoolVarArray(env, T);
+	//z = IloIntVar(env, 0, T);
 	char strnum[30];
 	for (int t = 0; t < T; t++) {
 		sprintf(strnum, "z(%d)", t);
@@ -294,6 +294,7 @@ void Problema_Vigas::funcao_objetivo2() {
 
 	model.add(IloMinimize(env, costSum)).setName("FO#2");
 	costSum.end();
+	//model.add(IloMinimize(env, z)).setName("FO#2");
 }
 
 void Problema_Vigas::funcao_objetivo3() {
@@ -429,6 +430,21 @@ void Problema_Vigas::restricoes_z() {
 		model.add(M*z[t] >= expr);
 		expr.end();
 	}
+	/*for (t = 0; t < T; t++)
+	{
+
+
+		for (m = 0; m < M; m++) {
+			IloExpr expr(env);
+			for (i = 1; i < P; i++)
+				if (maximal(Pattern[i], c_[m]) && (Pattern[i].cap <= c_[m]))
+					expr += x[i][m][t];
+			expr += x[0][m][t];
+
+			model.add(z >= (t + 1) * expr);
+			expr.end();
+		}
+	}*/
 }
 
 void Problema_Vigas::exportar_lp() {
@@ -445,8 +461,10 @@ void Problema_Vigas::resolver_linear() {
 		}
 	}
 
+	relax.add(IloConversion(env, z, ILOFLOAT));
+
 	cplex = IloCplex(relax);
-	exportar_lp();
+	//exportar_lp();
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
 		throw(-1);
@@ -466,11 +484,11 @@ void Problema_Vigas::revolver_ppl() {
 }
 void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	if (relaxacaolinear)
-		resultados << "	" << numvar << "	" << numvarP << "	" << cplex.getObjValue();
+		resultados << "	" << P_antigo << "	" << P << "	" << cplex.getObjValue();
 	else
 		resultados << "	" << cplex.getObjValue() << "	" << cplex.getNnodes() << "	" << cplex.getMIPRelativeGap();
 
-	return;
+	//return;
 	cplex.out() << "Status da solucao = " << cplex.getStatus() << endl;
 	cplex.out() << "Valor Otimo  = " << cplex.getObjValue() << endl;
 	cplex.out() << "#Iteracoes = " << cplex.getNiterations() << endl;
@@ -634,11 +652,10 @@ bool Problema_Vigas::verificacao() {
 			for (int i = 1; i < P; i++)
 				if (maximal(Pattern[i], c_[m]))
 					if (cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1))
-						if (Viga[Pattern[i].tipo].e  > 1)
-							for (int a = 1; a < Viga[Pattern[i].tipo].e - 1; t++)
-								if (T >= t + a)
-									if (cplex.getValue(x[0][m][t + a]) == 0)
-										return false;
+						if (Viga[Pattern[i].tipo].e > 1 && (t + Viga[Pattern[i].tipo].e - 1) < T-1)
+							for (int a = 1; a < Viga[Pattern[i].tipo].e; t++) 
+								if (cplex.getValue(x[0][m][t + a]) != 1)
+									return false;
 
 	//apenas um padrão??
 	for (int m = 0; m < M; m++) {
@@ -696,9 +713,12 @@ void Problema_Vigas::iniciar_lp(int fo, ofstream& resultados) {
 			break;
 		case 2:
 			funcao_objetivo2();
+			restricoes_z();
+			restricoes_continuidade();
 			break;
 		case 3:
 			funcao_objetivo3();
+			restricoes_continuidade();
 			break;
 		}
 
@@ -708,11 +728,6 @@ void Problema_Vigas::iniciar_lp(int fo, ofstream& resultados) {
 		restricoes_demanda();
 
 		restricoes_sequenciamento();
-		if (fo >= 2) {
-			restricoes_continuidade();
-			if(fo == 2)
-				restricoes_z();
-		}
 		
 		cplex = IloCplex(model);
 
@@ -742,46 +757,48 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados.open("resultados.txt", fstream::app);
 	resultados << endl;
 	resultados << instancia_nome << "\t";
-	try {
-		iniciar_variaveis();
-		cout << "\n\n\nResolvendo Linear... \n\n";
-		iniciar_lp(fo, resultados);
-		//exportar_lp();                   //criar arquivo .lp
+	//try {
+	//	iniciar_variaveis();
+	//	cout << "\n\n\nResolvendo Linear... \n\n";
+	//	iniciar_lp(fo, resultados);
+	//	//exportar_lp();                   //criar arquivo .lp
 
-		timeused(NULL);
-		resolver_linear();                    //resolver problema
-		timeused(&time);
+	//	timeused(NULL);
+	//	resolver_linear();                    //resolver problema
+	//	timeused(&time);
 
-		cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << time << endl;
-		
-
-	}
-	catch (...) {
-		cerr << endl << "\n Erro na resolucao da inteira" << endl;
-	}
-	/*imprimir_solucao(resultados);
-	resultados << "	" << time;*/
-
+	//	cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << time << endl;
+	//	
+	//	imprimir_solucao(resultados);
+	//	resultados << "	" << time;
+	//}
+	//catch (...) {
+	//	cerr << endl << "\n Erro na resolucao da linear" << endl;
+	//}
+	
+	
 	resultados.close();
+	//env.end();
 	resultados.open("resultados.txt", fstream::app);
 
 	try {
 		iniciar_variaveis();
 		cout << "\n\n\nResolvendo Inteira... \n\n";
 		iniciar_lp(fo, resultados);
-		exportar_lp();                   //criar arquivo .lp
+		//exportar_lp();                   //criar arquivo .lp
 
 		timeused(NULL);
 		revolver_ppl();                    //resolver problema
 		timeused(&time);
 
+		imprimir_solucao(resultados);
+		resultados << "	" << time;
 		cout << "\n\nTempo Resolucao do CPLEX gasto (Solucao Inteira): " << time << endl;
 	}
 	catch (...) {
 		cerr << endl << "\n Erro na resolucao da inteira" << endl;
 	}
-	imprimir_solucao(resultados);
-	resultados << "	" << time;
+	
 
 	resultados << endl;
 
