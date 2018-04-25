@@ -52,6 +52,8 @@ private:
 
 	void restricoes_z();
 
+	void simetria();
+
 	void exportar_lp();
 
 	void resolver_linear();
