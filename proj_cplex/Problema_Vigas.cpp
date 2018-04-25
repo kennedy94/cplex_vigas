@@ -447,6 +447,53 @@ void Problema_Vigas::restricoes_z() {
 	}*/
 }
 
+void Problema_Vigas::simetria() {
+	IloInt i, m, t, alpha;
+	IloExpr soma1(env), soma2(env);
+	for (m = 0; m < M; m++)
+		for (t = 0; t < T - 1; t++) {
+			for (i = 1; i < P; i++)
+				if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m]))
+					soma1 += i*x[i][m][t];
+
+
+			
+			for (alpha = 1; alpha < T - t; alpha++){
+				for (i = 1; i < P; i++) 
+					if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m]))
+						soma2 += i*x[i][m][t + alpha];
+
+				model.add(soma1 <= soma2 + P * x[0][m][t + alpha]);
+				soma2.clear();
+			}
+			
+			soma1.clear();
+		}
+
+
+					
+		
+
+	for (m = 0; m < M - 1; m++) {
+		for (t = 0; t < T; t++)
+			for (i = 1; i < P; i++)
+				if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m]))
+					soma1 += i*(t + 1)*x[i][m][t];
+		for (alpha = 1; alpha < M - m; alpha++) {
+			for (t = 0; t < T; t++)
+				for (i = 1; i < P; i++)
+					if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m]))
+						soma2 += i*(t + 1)*x[i][m + alpha][t];
+
+			model.add(soma1 <= soma2 + (x[0][m+alpha][t] * P));
+			soma2.clear();
+		}
+		soma1.clear();
+	}
+
+
+}
+
 void Problema_Vigas::exportar_lp() {
 	cplex.exportModel("problema_vigas.lp");
 }
@@ -475,7 +522,7 @@ void Problema_Vigas::revolver_ppl() {
 	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 200);
+	cplex.setParam(IloCplex::TiLim, 60);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
@@ -495,7 +542,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	cplex.out() << "#Nos de BB  = " << cplex.getNnodes() << endl;
 	cout << "\n     Funcao Objetivo: " << cplex.getObjValue() << endl;
 
-	bool imprimir = 0;
+	bool imprimir = 1;
 	if (imprimir) {
 		int contador = 1;
 		for (int t = 0; t < T; t++) {
@@ -741,7 +788,11 @@ void Problema_Vigas::iniciar_lp(int fo, ofstream& resultados) {
 
 		restricoes_sequenciamento();
 		
+		simetria();
+
+		cout << "Olar" << endl;
 		cplex = IloCplex(model);
+
 
 	}
 	catch (IloException& e) {
