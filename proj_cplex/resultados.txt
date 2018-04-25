@@ -246,3 +246,31 @@ casos		23.0000	0	0.0000
 casos		23.0000	0	0.0000
 casos	
 casos		23.0000	0	0.0000	23.1280
+
+casos		3.0000	0	0.0000	9.6340
+
+casos	
+casos	
+casos	
+casos		3.0000	0	0.0000	9.5960
+
+casos		3.0000	0	0.0000	9.5350
+
+casos	
+casos		3.0000	0	0.0000	9.5990
+
+casos	
+casos	
+casos	
+casos	
+casos	
+casos	
+casos		3.0000	0	0.0000	9.5800
+
+casos	
+casos	
+casos		3.0000	0	0.0000	9.5870
+
+casos		3.0000	0	0.0000	9.6660
+
+casos		3.0000	0	0.0000	9.5820

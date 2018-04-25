@@ -475,7 +475,7 @@ void Problema_Vigas::revolver_ppl() {
 	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 3600);
+	cplex.setParam(IloCplex::TiLim, 200);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
@@ -549,8 +549,18 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	int gantt = 0;
 	//--------------
 	txtsolu << endl;
-
-
+	cout << 1 << "," << 0 << "," << T << ",Type 0" << endl;
+	for (int m = 0; m < M; m++) {
+		bool usou = false;
+		for (int t = 0; t < T; t++)
+			for (int i = 1; i < P; i++)
+				if (maximal(Pattern[i], c_[m]) && cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1)) {
+					cout << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[i].tipo].e - 0.01 << ",Type " << Pattern[i].tipo + 1 << endl;
+					usou = true;
+				}
+		if(!usou)
+			cout << m+1 << "," << 0 << "," << T << ",Type 0" << endl;
+	}
 	for (int m = 0; m < M; m++) {
 		txtsolu << internal << setw(nameWidth) << setfill(separator) << m;
 		for (int t = 0; t < T; t++) {
@@ -650,12 +660,14 @@ bool Problema_Vigas::verificacao() {
 	for (int m = 0; m < M; m++)
 		for (int t = 0; t < T; t++)
 			for (int i = 1; i < P; i++)
-				if (maximal(Pattern[i], c_[m]))
-					if (cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1))
-						if (Viga[Pattern[i].tipo].e > 1 && (t + Viga[Pattern[i].tipo].e - 1) < T-1)
-							for (int a = 1; a < Viga[Pattern[i].tipo].e; t++) 
+				if (maximal(Pattern[i], c_[m])) 
+					if (cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1)) 
+						if (Viga[Pattern[i].tipo].e > 1 && (t + Viga[Pattern[i].tipo].e) < T)
+							for (int a = 1; a < Viga[Pattern[i].tipo].e; a++)
 								if (cplex.getValue(x[0][m][t + a]) != 1)
 									return false;
+					
+
 
 	//apenas um padrão??
 	for (int m = 0; m < M; m++) {
