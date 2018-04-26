@@ -32,6 +32,9 @@
   <ItemGroup>
     <None Include="hbp1_15_1" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="resultados.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{86D53EBE-C3D4-45CD-A6A1-CACD6860F9E0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

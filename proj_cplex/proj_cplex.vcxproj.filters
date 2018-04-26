@@ -42,4 +42,7 @@
   <ItemGroup>
     <None Include="hbp1_15_1" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="resultados.txt" />
+  </ItemGroup>
 </Project>
