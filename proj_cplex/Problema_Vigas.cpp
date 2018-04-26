@@ -450,7 +450,7 @@ void Problema_Vigas::restricoes_z() {
 void Problema_Vigas::simetria() {
 	IloInt i, m, t, alpha;
 	IloExpr soma1(env), soma2(env);
-	for (m = 0; m < M; m++)
+	/*for (m = 0; m < M; m++)
 		for (t = 0; t < T - 1; t++) {
 			for (i = 1; i < P; i++)
 				if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m]))
@@ -468,11 +468,8 @@ void Problema_Vigas::simetria() {
 			}
 			
 			soma1.clear();
-		}
+		}*/
 
-
-					
-		
 
 	for (m = 0; m < M - 1; m++) {
 		for (t = 0; t < T; t++)
@@ -482,10 +479,10 @@ void Problema_Vigas::simetria() {
 		for (alpha = 1; alpha < M - m; alpha++) {
 			for (t = 0; t < T; t++)
 				for (i = 1; i < P; i++)
-					if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m]))
+					if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m+alpha]))
 						soma2 += i*(t + 1)*x[i][m + alpha][t];
 
-			model.add(soma1 <= soma2 + (x[0][m+alpha][t] * P));
+			model.add(soma1 <= soma2);
 			soma2.clear();
 		}
 		soma1.clear();
@@ -522,7 +519,7 @@ void Problema_Vigas::revolver_ppl() {
 	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 60);
+	cplex.setParam(IloCplex::TiLim, 3600);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
