@@ -41,8 +41,323 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="hbp1_15_1" />
+    <None Include="..\x64\Debug\testes.bat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_5.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_5">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_4.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_4">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_3.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_3">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_2.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_1.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_30_1">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_5.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_5">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_4.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_4">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_3.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_3">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_2.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_1.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp4_15_1">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_5.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_5">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_4.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_4">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_3.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_3">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_2.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_1.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_30_1">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_5.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_5">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_4.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_4">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_3.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_3.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_3">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_2.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_2.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_1.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_1.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp3_15_1">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_5.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_5.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_5">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_4.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_4.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_4">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_3.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_3.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_3">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_2.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_2.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_1.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_1.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_30_1">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_5.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_5.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_5">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_4.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_4.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_4">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_3.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_3.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_3">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_2.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_2.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_1.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_1.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp2_15_1">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_5.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_5.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_5">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_4.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_4.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_4">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_3.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_3.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_3">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_2.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_2.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_1.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_1.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_30_1">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_5.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_5.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_5">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_4.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_4.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_4">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_3.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_3.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_3">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_2.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_2.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_1.solu">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_1.pat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\x64\Debug\hbp1_15_1">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="resultados.txt" />
+    <Text Include="..\x64\Debug\resultados.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
