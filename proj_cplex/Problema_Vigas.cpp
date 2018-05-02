@@ -450,7 +450,7 @@ void Problema_Vigas::restricoes_z() {
 void Problema_Vigas::simetria() {
 	IloInt i, m, t, alpha;
 	IloExpr soma1(env), soma2(env);
-	/*for (m = 0; m < M; m++)
+	for (m = 0; m < M; m++)
 		for (t = 0; t < T - 1; t++) {
 			for (i = 1; i < P; i++)
 				if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m]))
@@ -468,7 +468,7 @@ void Problema_Vigas::simetria() {
 			}
 			
 			soma1.clear();
-		}*/
+		}
 
 
 	for (m = 0; m < M - 1; m++) {
@@ -817,24 +817,24 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados.open("resultados.txt", fstream::app);
 	resultados << endl;
 	resultados << instancia_nome << "\t";
-	//try {
-	//	iniciar_variaveis();
-	//	cout << "\n\n\nResolvendo Linear... \n\n";
-	//	iniciar_lp(fo, resultados);
-	//	//exportar_lp();                   //criar arquivo .lp
+	try {
+		iniciar_variaveis();
+		
+		iniciar_lp(fo, resultados);
+		//exportar_lp();                   //criar arquivo .lp
+		cout << "\n\n\nResolvendo Linear... \n\n";
+		timeused(NULL);
+		resolver_linear();                    //resolver problema
+		timeused(&time);
 
-	//	timeused(NULL);
-	//	resolver_linear();                    //resolver problema
-	//	timeused(&time);
-
-	//	cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << time << endl;
-	//	
-	//	imprimir_solucao(resultados);
-	//	resultados << "	" << time;
-	//}
-	//catch (...) {
-	//	cerr << endl << "\n Erro na resolucao da linear" << endl;
-	//}
+		cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << time << endl;
+		
+		imprimir_solucao(resultados);
+		resultados << "	" << time;
+	}
+	catch (...) {
+		cerr << endl << "\n Erro na resolucao da linear" << endl;
+	}
 	
 	
 	resultados.close();
@@ -843,10 +843,10 @@ void Problema_Vigas::RODAR(int fo) {
 
 	try {
 		iniciar_variaveis();
-		cout << "\n\n\nResolvendo Inteira... \n\n";
+		
 		iniciar_lp(fo, resultados);
 		//exportar_lp();                   //criar arquivo .lp
-
+		cout << "\n\n\nResolvendo Inteira... \n\n";
 		timeused(NULL);
 		revolver_ppl();                    //resolver problema
 		timeused(&time);
