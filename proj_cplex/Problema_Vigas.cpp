@@ -684,6 +684,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 					sobra += Viga[Pattern[i].tipo].e * (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
 	txtsolu << "\n sobra=" << sobra << endl;
 
+	sobra = 0;
 	for (int t = 0; t < T; t++)
 		for (int m = 0; m < M; m++)
 			for (int i = 1; i < P; i++)
