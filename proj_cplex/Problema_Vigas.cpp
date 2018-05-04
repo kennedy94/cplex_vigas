@@ -227,13 +227,13 @@ void Problema_Vigas::Substituir_Padroes(list<Padrao> lista) {
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 void Problema_Vigas::iniciar_variaveis() {
-	z = IloBoolVarArray(env, T);
-	//z = IloIntVar(env, 0, T);
+	//z = IloBoolVarArray(env, T);
+	z = IloIntVar(env, 0, T);
 	char strnum[30];
-	for (int t = 0; t < T; t++) {
+	/*for (int t = 0; t < T; t++) {
 		sprintf(strnum, "z(%d)", t);
 		z[t].setName(strnum);
-	}
+	}*/
 
 	int contador = 0;
 
@@ -288,13 +288,13 @@ void Problema_Vigas::funcao_objetivo() {
 void Problema_Vigas::funcao_objetivo2() {
 	IloInt t;
 
-	IloExpr costSum(env);
+	/*IloExpr costSum(env);
 	for (t = 0; t < T; t++)
 		costSum += z[t];
 
 	model.add(IloMinimize(env, costSum)).setName("FO#2");
-	costSum.end();
-	//model.add(IloMinimize(env, z)).setName("FO#2");
+	costSum.end();*/
+	model.add(IloMinimize(env, z)).setName("FO#2");
 }
 
 void Problema_Vigas::funcao_objetivo3() {
@@ -416,7 +416,7 @@ void Problema_Vigas::restricoes_continuidade() {
 void Problema_Vigas::restricoes_z() {
 	IloInt t, m, i;
 
-	for (t = 0; t < T; t++)
+	/*for (t = 0; t < T; t++)
 	{
 		IloExpr expr(env);
 
@@ -429,8 +429,8 @@ void Problema_Vigas::restricoes_z() {
 
 		model.add(M*z[t] >= expr);
 		expr.end();
-	}
-	/*for (t = 0; t < T; t++)
+	}*/
+	for (t = 0; t < T; t++)
 	{
 
 
@@ -444,7 +444,7 @@ void Problema_Vigas::restricoes_z() {
 			model.add(z >= (t + 1) * expr);
 			expr.end();
 		}
-	}*/
+	}
 }
 
 void Problema_Vigas::simetria() {
