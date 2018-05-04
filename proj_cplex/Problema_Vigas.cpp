@@ -519,7 +519,7 @@ void Problema_Vigas::revolver_ppl() {
 	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 3600);
+	cplex.setParam(IloCplex::TiLim, 120);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
@@ -531,6 +531,10 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 		resultados << "	" << P_antigo << "	" << P << "	" << cplex.getObjValue();
 	else
 		resultados << "	" << cplex.getObjValue() << "	" << cplex.getNnodes() << "	" << cplex.getMIPRelativeGap();
+
+	double sobra = 0;
+
+	
 
 	//return;
 	cplex.out() << "Status da solucao = " << cplex.getStatus() << endl;
@@ -673,6 +677,20 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 
 	}
 
+	for (int t = 0; t < T; t++)
+		for (int m = 0; m < M; m++)
+			for (int i = 1; i < P; i++)
+				if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1)
+					sobra += Viga[Pattern[i].tipo].e * (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
+	txtsolu << "\n sobra=" << sobra << endl;
+
+	for (int t = 0; t < T; t++)
+		for (int m = 0; m < M; m++)
+			for (int i = 1; i < P; i++)
+				if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1)
+					sobra +=  (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
+	txtsolu << "\n sobra2=" << sobra << endl;
+
 	txtsolu.close();
 
 
@@ -785,7 +803,7 @@ void Problema_Vigas::iniciar_lp(int fo, ofstream& resultados) {
 
 		restricoes_sequenciamento();
 		
-		simetria();
+		//simetria();
 
 		cout << "Olar" << endl;
 		cplex = IloCplex(model);
