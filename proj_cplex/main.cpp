@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 
 	Problema_Vigas	Prob(inst, xu);
 	//Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
-	Prob.RODAR(1);
+	Prob.RODAR(2);
 
 	//getchar();
 	return 0;
