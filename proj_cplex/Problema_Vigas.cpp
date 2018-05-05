@@ -227,13 +227,15 @@ void Problema_Vigas::Substituir_Padroes(list<Padrao> lista) {
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 void Problema_Vigas::iniciar_variaveis() {
-	//z = IloBoolVarArray(env, T);
-	z = IloIntVar(env, 0, T);
+	
+	//z = IloIntVar(env, 0, T);
 	char strnum[30];
-	/*for (int t = 0; t < T; t++) {
+
+	z = IloBoolVarArray(env, T);
+	for (int t = 0; t < T; t++) {
 		sprintf(strnum, "z(%d)", t);
 		z[t].setName(strnum);
-	}*/
+	}
 
 	int contador = 0;
 
@@ -288,13 +290,13 @@ void Problema_Vigas::funcao_objetivo() {
 void Problema_Vigas::funcao_objetivo2() {
 	IloInt t;
 
-	/*IloExpr costSum(env);
+	IloExpr costSum(env);
 	for (t = 0; t < T; t++)
 		costSum += z[t];
 
 	model.add(IloMinimize(env, costSum)).setName("FO#2");
-	costSum.end();*/
-	model.add(IloMinimize(env, z)).setName("FO#2");
+	costSum.end();
+	//model.add(IloMinimize(env, z)).setName("FO#2");
 }
 
 void Problema_Vigas::funcao_objetivo3() {
@@ -416,7 +418,7 @@ void Problema_Vigas::restricoes_continuidade() {
 void Problema_Vigas::restricoes_z() {
 	IloInt t, m, i;
 
-	/*for (t = 0; t < T; t++)
+	for (t = 0; t < T; t++)
 	{
 		IloExpr expr(env);
 
@@ -429,8 +431,8 @@ void Problema_Vigas::restricoes_z() {
 
 		model.add(M*z[t] >= expr);
 		expr.end();
-	}*/
-	for (t = 0; t < T; t++)
+	}
+	/*for (t = 0; t < T; t++)
 	{
 
 
@@ -444,7 +446,7 @@ void Problema_Vigas::restricoes_z() {
 			model.add(z >= (t + 1) * expr);
 			expr.end();
 		}
-	}
+	}*/
 }
 
 void Problema_Vigas::simetria() {
@@ -692,8 +694,25 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 					sobra +=  (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
 	txtsolu << "\n sobra2=" << sobra << endl;
 
-	txtsolu.close();
+	double *sobra_dia = new double[T];
+	for (int t = 0; t < T; t++)
+		sobra_dia[t] = 0;
 
+
+	for (int t = 0; t < T; t++) {
+		for (int m = 0; m < M; m++) {
+			for (int i = 1; i < P; i++)
+				if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1) {
+					for (int a = 0; a <  Viga[Pattern[i].tipo].e; a++)
+						sobra_dia[t+a] += (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
+				}
+		}
+	}
+	for (int t = 0; t < T; t++)
+		txtsolu << "\n sobra dia" << t << "=" << sobra_dia[t] << endl;
+
+	delete sobra_dia;
+	txtsolu.close();
 
 
 	if (verificacao())

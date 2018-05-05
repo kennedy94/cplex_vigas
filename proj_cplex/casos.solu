@@ -31,3 +31,11 @@ Tipo 2
  sobra=1.05
 
  sobra2=0.35
+
+ sobra dia0=0.1
+
+ sobra dia1=0.35
+
+ sobra dia2=0.35
+
+ sobra dia3=0.25
