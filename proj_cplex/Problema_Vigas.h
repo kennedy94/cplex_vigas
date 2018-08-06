@@ -13,7 +13,7 @@ class Problema_Vigas {
 protected:
 	//dados da instancia
 	int C, M, T;
-	double *c_;
+	double *c_; // Guarda as capacidades das formas
 	const char* instancia_nome;
 
 	Tipo_Viga *Viga;

@@ -171,39 +171,76 @@ void Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 	vector<int> FORMAS_ACUM(M);
 	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
 
+	//struct OPERACAO {
+	//	Padrao PADRAO_OP();
+	//	int FORMA;
+	//};
 
-	/*Estrutura para atualizar a demanda atual*/
-	Tipo_Viga *DEMANDAS = new Tipo_Viga[C];
-	for (int i = 0; i < C; i++) DEMANDAS[i].alocar_PADRAO(Viga[i].k, i);
+	/*Para cada tipo*/
+	for (int iterador_ordem = 0; iterador_ordem < C; iterador_ordem++) {
+		/*Até ter a demanda atendida vamos iterar?
+			ou até obter um padrão maximal*/
 
-
-	struct OPERACAO {
-		Tipo_Viga PADRAO_OP();
-		int FORMA;
-	};
-	int iterador_ordem = 0;
-	while (true) {/*Até ter a demanda atendida vamos iterar?
-				  Até obter um padrão maximal*/
-		/*Pegar a primeira forma livre
-			argmin de FORMA_ACUM
-		*/
+			/*Pegar o tipo de viga a ser trabalhado*/
 		int TIPO_ATUAL = ORDEM_TIPOS[iterador_ordem];
 
-		if(!comparar_demandas())
+		/*Estrutura para atualizar a demanda atual*/
+		Padrao DEMANDA_ATUAL;
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
 
-		int FORMA_ATUAL = distance(FORMAS_ACUM.begin(),min_element(FORMAS_ACUM.begin(),
-			FORMAS_ACUM.end()));
+		cout << "Tipo " << TIPO_ATUAL << endl;
+
+		/*Itera nas formas*/
+		while (true)/*Até a demanda do tipo ser atendida*/{
+
+			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
+			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
+				FORMAS_ACUM.end()));
+
+			cout << "\t Forma " << FORMA_ATUAL << endl;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+
+			/*Inicia a forma com o padrão vazio*/
+			Padrao Padrao_ATUAL;
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+			
+			/*Itera os tamanhos
+			Encher a forma até o talo*/
+			int tamanho_escolhido = 0;
+			while (true)/*Até a forma estar cheia vamos iterar*/{
+				/*Ainda cabe mais um? Se sim, incrementa*/
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]){
+					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
+						break;
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
+					
+					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
+					toda bonitinha*/
+					DEMANDA_ATUAL.tamanhos[tamanho_escolhido]++;
+				}
+				
+				
+				cout << "\t\t";
+				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
+					cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
+				cout << endl;
+				getchar();
+
+				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
+					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+					break;
+				else
+					tamanho_escolhido++;
+			}//end while
+
+			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+				break;
+			
+			/*Salvar o padrao que associado à forma*/
+		}// end while
 		
-		/*Pegar o tipo de viga a ser trabalhado*/
-
-		//comparar_demandas()
-
-		//Padrao PADRAO_AUX(M, );
-		while (true)/*Até a forma estar cheia vamos iterar*/
-		{
-			/*Encher a forma até o talo*/
-		}
-		/*Salvar o padrao que associado à forma*/
+		
 	}
 
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.

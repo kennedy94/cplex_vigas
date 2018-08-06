@@ -64,15 +64,25 @@ void Padrao::alocar_PADRAO(int k, int tipo) {
 		tamanhos[i] = 0;
 
 }
-bool Padrao::comparar_demandas(const Tipo_Viga & c1, const Padrao & c2)
+bool Padrao::comparar_demandas(const Tipo_Viga & c1)
 {
-	if (c1.k != c2.k)	return false;
+	if (c1.k != k)	return false;
 
 	for (int i = 0; i < c1.k; i++) {
-		if (c1.d[i] != c2.d[i])
+		if (c1.d[i] > tamanhos[i])
 			return false;
 		else
 			continue;
 	}
+	return true;
+}
+
+bool Padrao::comparar_demandas(const Tipo_Viga & c1, int IND_TAMANHO)
+{
+	if (c1.k != k)	return false;
+
+	if(c1.d[IND_TAMANHO] > tamanhos[IND_TAMANHO])
+		return false;
+
 	return true;
 }

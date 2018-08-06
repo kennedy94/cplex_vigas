@@ -11,23 +11,23 @@ protected:
 	
 
 public:
-	void alocar_PADRAO(int k, int tipo);
-	bool comparar_demandas(const Tipo_Viga & c1, const Padrao & c2);
+	//Construtores
+	Padrao();
+	//Estruturas
 	int id;
 	int tipo;
-	
-	void contar();
 	int n_cobertos;
 	int k;
 	int *tamanhos;
 	double cap;
+	//Métodos
 
+	bool comparar_demandas(const Tipo_Viga & c1);
+	bool comparar_demandas(const Tipo_Viga & c1, int IND_TAMANHO);
+	void contar();
 	bool contem(int tam);
 	int n_cobre_naocobertos;
 	void alocar_PADRAO(int k, int tipo);
-	Padrao();
-
-
 	
 
 };
