@@ -1,5 +1,8 @@
 #include "Padrao.h"
 
+
+
+
 bool operator== (const Padrao &c1, const Padrao &c2) {
 	if (c1.tipo != c2.tipo) return false;
 
@@ -25,6 +28,16 @@ bool operador_padrao_naocobertos(const Padrao &c1, const Padrao &c2) {
 }
 
 
+
+
+Padrao::Padrao() {
+	id = -1;
+	tipo = -1;
+	n_cobertos = 0;
+	k = 0;
+	cap = 0;
+}
+
 void Padrao::contar() {
 	n_cobertos = 0;
 	for (int i = 0; i < k; i++)
@@ -43,3 +56,23 @@ bool Padrao::contem(int tam) {
 }
 
 
+void Padrao::alocar_PADRAO(int k, int tipo) {
+	this->k = k;
+	this->tipo = tipo;
+	tamanhos = new int[k];
+	for (int i = 0; i < k; i++)
+		tamanhos[i] = 0;
+
+}
+bool Padrao::comparar_demandas(const Tipo_Viga & c1, const Padrao & c2)
+{
+	if (c1.k != c2.k)	return false;
+
+	for (int i = 0; i < c1.k; i++) {
+		if (c1.d[i] != c2.d[i])
+			return false;
+		else
+			continue;
+	}
+	return true;
+}

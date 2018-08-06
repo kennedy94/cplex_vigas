@@ -1,5 +1,10 @@
 
 #include "Problema_Vigas.h"
+/*
+	OBS: trocar tudo de ponteiro para vector
+*/
+#include <algorithm>
+#include <vector>
 void timeused(double *time)
 {
 	static double tstart, tend, tprev;
@@ -16,6 +21,7 @@ void timeused(double *time)
 		*time = (tend - tstart) / CLOCKS_PER_SEC; /* convert to seconds */
 	}
 }
+
 
 
 Problema_Vigas::Problema_Vigas(const char* filename, const char* filename2) {
@@ -121,6 +127,93 @@ int Problema_Vigas::cobre_naocobertos(list<Padrao> conj, Padrao pat, int n_vezes
 	return contador;
 }
 
+
+void Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
+	//J'ai une demande de betons et je veux en mettre dans les formes 
+	//dans l'ordre 'premier la plus petite'
+	//Comment est-ce que je fais les structures?
+	
+	list<Padrao> SOLUCAO;
+
+
+	//Ordenar os tipos de viga em ordem crescente de tempo de cura
+	int *ORDEM_TIPOS = new int[C];	//Guarda ordem dos tipos
+	bool *USOU_OU_NAO = new bool[C];	/*Booleanos para dizer se o
+										tipo de viga já foi alocado
+										no vetor de ordens ou não*/
+	for (int i = 0; i < C; i++) {/*Inicializar os dois vetores*/
+		ORDEM_TIPOS[i] = -1;
+		USOU_OU_NAO[i] = false;
+	}
+
+	for (int contador = 0; contador < C; contador++){
+		int tipo;
+		int maior = 100;
+		for (int i = 0; i < C; i++){
+			if (Viga[i].e < maior && !USOU_OU_NAO[i]) {
+				maior = Viga[i].e;
+				tipo = i;
+			}/*Se tipo i tem tempo de cura menor e ainda não foi 
+			 usado*/
+		}
+		ORDEM_TIPOS[contador] = tipo; //Menor tipo não usado é alocado
+		USOU_OU_NAO[tipo] = true;	//Atualizar tipo escolhido nos booleanos
+	}
+	delete[]USOU_OU_NAO; /*Vetor utilizado só na ordenação, então
+						 não é mais necessário*/
+
+	/*Brainstorming de estruturas
+	Criar uma estrutura de utilização de formas
+	Lista para tempos acumulados das formas
+	Lista de operações
+	Estrutura para o padrao atual na forma escolhida
+	Estrutura para a demanda atual atendida*/
+	vector<int> FORMAS_ACUM(M);
+	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
+
+
+	/*Estrutura para atualizar a demanda atual*/
+	Tipo_Viga *DEMANDAS = new Tipo_Viga[C];
+	for (int i = 0; i < C; i++) DEMANDAS[i].alocar_PADRAO(Viga[i].k, i);
+
+
+	struct OPERACAO {
+		Tipo_Viga PADRAO_OP();
+		int FORMA;
+	};
+	int iterador_ordem = 0;
+	while (true) {/*Até ter a demanda atendida vamos iterar?
+				  Até obter um padrão maximal*/
+		/*Pegar a primeira forma livre
+			argmin de FORMA_ACUM
+		*/
+		int TIPO_ATUAL = ORDEM_TIPOS[iterador_ordem];
+
+		if(!comparar_demandas())
+
+		int FORMA_ATUAL = distance(FORMAS_ACUM.begin(),min_element(FORMAS_ACUM.begin(),
+			FORMAS_ACUM.end()));
+		
+		/*Pegar o tipo de viga a ser trabalhado*/
+
+		//comparar_demandas()
+
+		//Padrao PADRAO_AUX(M, );
+		while (true)/*Até a forma estar cheia vamos iterar*/
+		{
+			/*Encher a forma até o talo*/
+		}
+		/*Salvar o padrao que associado à forma*/
+	}
+
+	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
+	*/
+
+
+
+
+	delete []ORDEM_TIPOS; //
+}
 
 
 

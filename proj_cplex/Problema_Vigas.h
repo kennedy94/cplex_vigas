@@ -91,6 +91,9 @@ public:
 
 	int cobre_naocobertos(list<Padrao> conj, Padrao pat, int n_vezes);
 
+	void HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
+
+
 
 
 
