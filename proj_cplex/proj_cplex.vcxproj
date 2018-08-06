@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OPERACAO.cpp" />
     <ClCompile Include="Padrao.cpp" />
     <ClCompile Include="Problema_Vigas.cpp" />
     <ClCompile Include="Tipo_Viga.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="OPERACAO.h" />
     <ClInclude Include="Padrao.h" />
     <ClInclude Include="Problema_Vigas.h" />
     <ClInclude Include="Tipo_Viga.h" />

@@ -6,8 +6,11 @@
 #include <fstream>
 #include <set>
 #include <ilcplex/ilocplex.h>
+#include "OPERACAO.h"
+
 
 using namespace std;
+
 
 class Problema_Vigas {
 protected:
@@ -91,7 +94,9 @@ public:
 
 	int cobre_naocobertos(list<Padrao> conj, Padrao pat, int n_vezes);
 
-	void HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
+	list<OPERACAO> HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
+
+	void TRANSFORMAR_em_MAXIMAL(Padrao P, double FORMA_cap);
 
 
 

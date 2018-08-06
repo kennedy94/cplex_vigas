@@ -1,5 +1,8 @@
 
 #include "Problema_Vigas.h"
+
+
+
 /*
 	OBS: trocar tudo de ponteiro para vector
 */
@@ -128,12 +131,10 @@ int Problema_Vigas::cobre_naocobertos(list<Padrao> conj, Padrao pat, int n_vezes
 }
 
 
-void Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
+list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 	//J'ai une demande de betons et je veux en mettre dans les formes 
 	//dans l'ordre 'premier la plus petite'
 	//Comment est-ce que je fais les structures?
-	
-	list<Padrao> SOLUCAO;
 
 
 	//Ordenar os tipos de viga em ordem crescente de tempo de cura
@@ -171,10 +172,9 @@ void Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 	vector<int> FORMAS_ACUM(M);
 	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
 
-	//struct OPERACAO {
-	//	Padrao PADRAO_OP();
-	//	int FORMA;
-	//};
+	
+	
+	list<OPERACAO> list_operacao;
 
 	/*Para cada tipo*/
 	for (int iterador_ordem = 0; iterador_ordem < C; iterador_ordem++) {
@@ -233,24 +233,51 @@ void Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 				else
 					tamanho_escolhido++;
 			}//end while
+			OPERACAO op_aux;
+			op_aux.FORMA = FORMA_ATUAL;
+			op_aux.PADRAO_OP = Padrao_ATUAL;
+
+			list_operacao.push_back(op_aux);
 
 			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 				break;
 			
 			/*Salvar o padrao que associado à forma*/
 		}// end while
-		
+		for(auto elemento:)
 		
 	}
+
+
 
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
 	*/
 
-
-
-
 	delete []ORDEM_TIPOS; //
+
+	return list_operacao;
 }
+/*	PRESTE ATENÇÃO QUE TUDO EM RELAÇÃO AOS TAMANHOS DOS PADRÕES ESTÁ CONSIDERENDO QUE ELES JÁ
+ESTÃO ORDENADOS NA INSTÂNCIA*/
+void Problema_Vigas::TRANSFORMAR_em_MAXIMAL(Padrao P, double FORMA_cap) {
+	int contador = 1;
+	
+	while (!maximal(P, FORMA_cap)){
+		if (P.cap + Viga[P.tipo].l[P.k - contador] <= FORMA_cap)
+			P.tamanhos[P.k - contador]++;
+		else
+			contador++;
+	}
+}
+
+
+/*
+Próximos passos:
+	Criar uma função que transforma os padrões retornados em maximais com preferências
+	em fazer vigas maiores;
+	Visualizar o Gantt;
+	Calcular as funções objetivo;
+*/
 
 
 
@@ -863,6 +890,8 @@ bool Problema_Vigas::maximal(const Padrao P, double C_FORMA) {
 
 
 }
+
+
 
 //pseudo-funcao de verificacao
 bool Problema_Vigas::verificacao() {

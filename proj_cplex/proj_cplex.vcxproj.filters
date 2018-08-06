@@ -27,6 +27,9 @@
     <ClCompile Include="Tipo_Viga.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OPERACAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Problema_Vigas.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tipo_Viga.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OPERACAO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
