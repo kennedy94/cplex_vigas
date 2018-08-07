@@ -20,8 +20,10 @@ int main(int argc, char *argv[]) {
 	strcat(xu, ".pat");
 
 	Problema_Vigas	Prob(inst, xu);
-	/*Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
-	Prob.RODAR(3);*/
+
+	//Fazer reduction size
+	Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
+	Prob.RODAR(3);
 	cout << "Instância \t" << inst << endl;
 	Prob.imprimir_resultados();
 	/*Prob.CALCULAR_LB();
