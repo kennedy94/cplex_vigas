@@ -1568,7 +1568,7 @@ void Problema_Vigas::revolver_ppl() {
 	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 120);
+	cplex.setParam(IloCplex::TiLim, 3600);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
