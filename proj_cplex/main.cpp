@@ -20,9 +20,18 @@ int main(int argc, char *argv[]) {
 	strcat(xu, ".pat");
 
 	Problema_Vigas	Prob(inst, xu);
-	//Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
-	//Prob.RODAR(1);
+	/*Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
+	Prob.RODAR(3);*/
+	cout << "Instância \t" << inst << endl;
+	Prob.imprimir_resultados();
+	/*Prob.CALCULAR_LB();
 	Prob.HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
+	Prob.HEURISTIQUE_PLUS_VITE_PLUS_GROSSES();
+	Prob.HEURISTIQUE_MOINS_VITE_PLUS_PETITES();
+	Prob.HEURISTIQUE_MOINS_VITE_PLUS_GROSSES();
+	Prob.HEURISTIQUE_PLUS_VITE_ALTERNE();
+	Prob.HEURISTIQUE_MOINS_VITE_ALTERNE();*/
+	
 	//getchar();
 	return 0;
 }

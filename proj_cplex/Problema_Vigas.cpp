@@ -3,7 +3,7 @@
 
 
 /*
-	OBS: trocar tudo de ponteiro para vector
+OBS: trocar tudo de ponteiro para vector
 */
 #include <algorithm>
 #include <vector>
@@ -100,7 +100,7 @@ int Problema_Vigas::cobre(list<Padrao> conj, int tipo, int tamanho) {
 	for (auto elemento : conj)
 		if (elemento.tipo == tipo & elemento.tamanhos[tamanho] > 0)
 			conta++;
-		
+
 	return conta;
 }
 
@@ -121,7 +121,7 @@ int Problema_Vigas::cobre_naocobertos(list<Padrao> conj, Padrao pat, int n_vezes
 	int contador = 0;
 
 	for (int i = 0; i < pat.k; i++)
-		if(cobre(conj, pat.tipo, i) < n_vezes)
+		if (cobre(conj, pat.tipo, i) < n_vezes)
 			if (pat.tamanhos[i] > 0) {
 				contador++;
 			}
@@ -129,7 +129,9 @@ int Problema_Vigas::cobre_naocobertos(list<Padrao> conj, Padrao pat, int n_vezes
 	return contador;
 }
 
-
+/*__________________________________________________________________________________________
+HEURISTICAS
+__________________________________________________________________________________________*/
 list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 	//J'ai une demande de betons et je veux en mettre dans les formes 
 	//dans l'ordre 'premier la plus petite'
@@ -146,14 +148,14 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 		USOU_OU_NAO[i] = false;
 	}
 
-	for (int contador = 0; contador < C; contador++){
+	for (int contador = 0; contador < C; contador++) {
 		int tipo;
-		int maior = 100;
-		for (int i = 0; i < C; i++){
-			if (Viga[i].e < maior && !USOU_OU_NAO[i]) {
-				maior = Viga[i].e;
+		int menor = 100;
+		for (int i = 0; i < C; i++) {
+			if (Viga[i].e < menor && !USOU_OU_NAO[i]) {
+				menor = Viga[i].e;
 				tipo = i;
-			}/*Se tipo i tem tempo de cura menor e ainda não foi 
+			}/*Se tipo i tem tempo de cura menor e ainda não foi
 			 usado*/
 		}
 		ORDEM_TIPOS[contador] = tipo; //Menor tipo não usado é alocado
@@ -162,25 +164,25 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 	delete[]USOU_OU_NAO; /*Vetor utilizado só na ordenação, então
 						 não é mais necessário*/
 
-	/*Brainstorming de estruturas
-	Criar uma estrutura de utilização de formas
-	Lista para tempos acumulados das formas
-	Lista de operações
-	Estrutura para o padrao atual na forma escolhida
-	Estrutura para a demanda atual atendida*/
+						 /*Brainstorming de estruturas
+						 Criar uma estrutura de utilização de formas
+						 Lista para tempos acumulados das formas
+						 Lista de operações
+						 Estrutura para o padrao atual na forma escolhida
+						 Estrutura para a demanda atual atendida*/
 	vector<int> FORMAS_ACUM(M);
 	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
 
-	
-	
+
+
 	list<OPERACAO> list_operacao;
 
 	/*Para cada tipo*/
 	for (int iterador_ordem = 0; iterador_ordem < C; iterador_ordem++) {
 		/*Até ter a demanda atendida vamos iterar?
-			ou até obter um padrão maximal*/
+		ou até obter um padrão maximal*/
 
-			/*Pegar o tipo de viga a ser trabalhado*/
+		/*Pegar o tipo de viga a ser trabalhado*/
 		int TIPO_ATUAL = ORDEM_TIPOS[iterador_ordem];
 
 		/*Estrutura para atualizar a demanda atual*/
@@ -190,7 +192,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 		//cout << "Tipo " << TIPO_ATUAL << endl;
 
 		/*Itera nas formas*/
-		while (true)/*Até a demanda do tipo ser atendida*/{
+		while (true)/*Até a demanda do tipo ser atendida*/ {
 
 			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
 			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
@@ -198,11 +200,11 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 			/*cout << "\n\t\t" << endl;
 			for (int forma = 0; forma < M; forma++)
 			{
-				cout << FORMAS_ACUM[forma] << " ";
+			cout << FORMAS_ACUM[forma] << " ";
 			}
 			cout << endl;
 			getchar();*/
-			
+
 			//------------------PRINT
 			//cout << "\t Forma " << FORMA_ATUAL << endl;
 			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
@@ -210,27 +212,27 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 			/*Inicia a forma com o padrão vazio*/
 			Padrao Padrao_ATUAL;
 			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
-			
+
 			/*Itera os tamanhos
 			Encher a forma até o talo*/
 			int tamanho_escolhido = 0;
-			while (true)/*Até a forma estar cheia vamos iterar*/{
+			while (true)/*Até a forma estar cheia vamos iterar*/ {
 				/*Ainda cabe mais um? Se sim, incrementa*/
-				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]){
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
 					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
 						break;
 					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
 					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
-					
+
 					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
 					toda bonitinha*/
 					DEMANDA_ATUAL.tamanhos[tamanho_escolhido]++;
 				}
-				
-				
+
+
 				/*cout << "\t\t";
 				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
-					cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
+				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
 				cout << endl;
 				getchar();*/
 
@@ -240,7 +242,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 				else
 					tamanho_escolhido++;
 			}//end while
-			
+
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
@@ -250,45 +252,201 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 				break;
 		}// end while
-		
+
 	}
 
 	for (auto &elemento : list_operacao)
 		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
 
 
-	for (auto elemento : list_operacao) {
-		cout << "\t\t Forma: " << elemento.FORMA << " - ";
-		for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
-			cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
-		cout << "------" << elemento.PADRAO_OP.cap << endl;
-		//getchar();
-	}
+	//for (auto elemento : list_operacao) {
+	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
+	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
+	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
+	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
+	//	//getchar();
+	//}
 
 
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
 	*/
-	cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
-	cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
-	cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
-	getchar();
-	delete []ORDEM_TIPOS; 
+	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
+	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
+	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
+	//getchar();
+	delete[]ORDEM_TIPOS;
+
+	return list_operacao;
+}
+
+list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
+	//J'ai une demande de betons et je veux en mettre dans les formes 
+	//dans l'ordre 'premier la plus grosse'
+	//Comment est-ce que je fais les structures?
+
+
+	//Ordenar os tipos de viga em ordem crescente de tempo de cura
+	int *ORDEM_TIPOS = new int[C];	//Guarda ordem dos tipos
+	bool *USOU_OU_NAO = new bool[C];	/*Booleanos para dizer se o
+										tipo de viga já foi alocado
+										no vetor de ordens ou não*/
+	for (int i = 0; i < C; i++) {/*Inicializar os dois vetores*/
+		ORDEM_TIPOS[i] = -1;
+		USOU_OU_NAO[i] = false;
+	}
+
+
+	/*Ordena os tipos por tempo de cura de ordem crescente*/
+	for (int contador = 0; contador < C; contador++) {
+		int tipo;
+		int menor = 100;
+		for (int i = 0; i < C; i++) {
+			if (Viga[i].e < menor && !USOU_OU_NAO[i]) {
+				menor = Viga[i].e;
+				tipo = i;
+			}/*Se tipo i tem tempo de cura menor e ainda não foi
+			 usado*/
+		}
+		ORDEM_TIPOS[contador] = tipo; //Menor tipo não usado é alocado
+		USOU_OU_NAO[tipo] = true;	//Atualizar tipo escolhido nos booleanos
+	}
+	delete[]USOU_OU_NAO; /*Vetor utilizado só na ordenação, então
+						 não é mais necessário*/
+
+						 /*Brainstorming de estruturas
+						 Criar uma estrutura de utilização de formas
+						 Lista para tempos acumulados das formas
+						 Lista de operações
+						 Estrutura para o padrao atual na forma escolhida
+						 Estrutura para a demanda atual atendida*/
+	vector<int> FORMAS_ACUM(M);
+	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
+
+
+
+	list<OPERACAO> list_operacao;
+
+	/*Para cada tipo*/
+	for (int iterador_ordem = 0; iterador_ordem < C; iterador_ordem++) {
+		/*Até ter a demanda atendida vamos iterar?
+		ou até obter um padrão maximal*/
+
+		/*Pegar o tipo de viga a ser trabalhado*/
+		int TIPO_ATUAL = ORDEM_TIPOS[iterador_ordem];
+
+		/*Estrutura para atualizar a demanda atual*/
+		Padrao DEMANDA_ATUAL;
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+		//cout << "Tipo " << TIPO_ATUAL << endl;
+
+		/*Itera nas formas*/
+		while (true)/*Até a demanda do tipo ser atendida*/ {
+
+			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
+			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
+				FORMAS_ACUM.end()));
+			/*cout << "\n\t\t" << endl;
+			for (int forma = 0; forma < M; forma++)
+			{
+			cout << FORMAS_ACUM[forma] << " ";
+			}
+			cout << endl;
+			getchar();*/
+
+			//------------------PRINT
+			//cout << "\t Forma " << FORMA_ATUAL << endl;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+
+			/*Inicia a forma com o padrão vazio*/
+			Padrao Padrao_ATUAL;
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+			/*Itera os tamanhos
+			Encher a forma até o talo*/
+			/*______________________________________________________________________
+			Aqui muda a prioridade do tamanho para escolher as vigas maiores primeiro
+			______________________________________________________________________*/
+			int tamanho_escolhido = Padrao_ATUAL.k - 1;
+			while (true)/*Até a forma estar cheia vamos iterar*/ {
+				/*Ainda cabe mais um? Se sim, incrementa*/
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
+						break;
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
+
+					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
+					toda bonitinha*/
+					DEMANDA_ATUAL.tamanhos[tamanho_escolhido]++;
+				}
+
+
+				/*cout << "\t\t";
+				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
+				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
+				cout << endl;
+				getchar();*/
+
+				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
+					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+					break;
+				/*______________________________________________________________________
+				Aqui muda a prioridade do tamanho para escolher as vigas maiores primeiro
+				______________________________________________________________________*/
+				else
+					tamanho_escolhido--;
+
+			}//end while
+
+			OPERACAO op_aux;
+			op_aux.FORMA = FORMA_ATUAL;
+			op_aux.PADRAO_OP = Padrao_ATUAL;
+
+			list_operacao.push_back(op_aux);
+
+			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+				break;
+		}// end while
+
+	}
+
+	for (auto &elemento : list_operacao)
+		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
+
+
+	//for (auto elemento : list_operacao) {
+	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
+	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
+	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
+	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
+	//	//getchar();
+	//}
+
+
+	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
+	*/
+	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
+	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
+	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
+	//getchar();
+	delete[]ORDEM_TIPOS;
 
 	return list_operacao;
 }
 
 /*ok*/
 double Problema_Vigas::CALCULAR_MAKESPAN_OP(list<OPERACAO> LISTA_PAT) {
-	
+
 	double makespan = 0;
 	vector<int> FORMAS_TEMPO_ACUM(M);
 
 	for (int i = 0; i < M; i++)
 		FORMAS_TEMPO_ACUM[i] = 0;
-	
+
 	for (auto elemento : LISTA_PAT) {
 		FORMAS_TEMPO_ACUM[elemento.FORMA] += Viga[elemento.PADRAO_OP.tipo].e;
-		
+
 		if (FORMAS_TEMPO_ACUM[elemento.FORMA] >= makespan) {
 			makespan = FORMAS_TEMPO_ACUM[elemento.FORMA];
 		}
@@ -297,14 +455,13 @@ double Problema_Vigas::CALCULAR_MAKESPAN_OP(list<OPERACAO> LISTA_PAT) {
 	return makespan;
 }
 
-
 double Problema_Vigas::CALCULAR_SOBRA_OP(list<OPERACAO> LISTA_PAT) {
 
 	double sobra = 0;
 
 	for (auto elemento : LISTA_PAT)
 		sobra += (c_[elemento.FORMA] - elemento.PADRAO_OP.cap)* Viga[elemento.PADRAO_OP.tipo].e;
-	cout << "\nsize :" << sizeof(LISTA_PAT) << endl;
+
 	return sobra;
 }
 
@@ -325,7 +482,7 @@ ESTÃO ORDENADOS NA INSTÂNCIA*/
 void Problema_Vigas::TRANSFORMAR_em_MAXIMAL(Padrao &P, double FORMA_cap) {
 	int contador = 1;
 	/*Vou adicionando da maior para a menor viga*/
-	while (!maximal(P, FORMA_cap)){
+	while (!maximal(P, FORMA_cap)) {
 		if (P.cap + Viga[P.tipo].l[P.k - contador] <= FORMA_cap) {
 			P.tamanhos[P.k - contador]++;
 			P.cap += Viga[P.tipo].l[P.k - contador];
@@ -335,21 +492,676 @@ void Problema_Vigas::TRANSFORMAR_em_MAXIMAL(Padrao &P, double FORMA_cap) {
 	}
 }
 
+list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_PETITES() {
+	//J'ai une demande de betons et je veux en mettre dans les formes 
+	//dans l'ordre 'premier la plus petite'
+	//Comment est-ce que je fais les structures?
+
+
+	//Ordenar os tipos de viga em ordem crescente de tempo de cura
+	int *ORDEM_TIPOS = new int[C];	//Guarda ordem dos tipos
+	bool *USOU_OU_NAO = new bool[C];	/*Booleanos para dizer se o
+										tipo de viga já foi alocado
+										no vetor de ordens ou não*/
+	for (int i = 0; i < C; i++) {/*Inicializar os dois vetores*/
+		ORDEM_TIPOS[i] = -1;
+		USOU_OU_NAO[i] = false;
+	}
+
+	for (int contador = 0; contador < C; contador++) {
+		int tipo;
+		int maior = -1;
+		for (int i = 0; i < C; i++) {
+			if (Viga[i].e > maior && !USOU_OU_NAO[i]) {
+				maior = Viga[i].e;
+				tipo = i;
+			}/*Se tipo i tem tempo de cura menor e ainda não foi
+			 usado*/
+		}
+		ORDEM_TIPOS[contador] = tipo; //Menor tipo não usado é alocado
+		USOU_OU_NAO[tipo] = true;	//Atualizar tipo escolhido nos booleanos
+	}
+	delete[]USOU_OU_NAO; /*Vetor utilizado só na ordenação, então
+						 não é mais necessário*/
+
+						 /*Brainstorming de estruturas
+						 Criar uma estrutura de utilização de formas
+						 Lista para tempos acumulados das formas
+						 Lista de operações
+						 Estrutura para o padrao atual na forma escolhida
+						 Estrutura para a demanda atual atendida*/
+	vector<int> FORMAS_ACUM(M);
+	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
+
+
+
+	list<OPERACAO> list_operacao;
+
+	/*Para cada tipo*/
+	for (int iterador_ordem = 0; iterador_ordem < C; iterador_ordem++) {
+		/*Até ter a demanda atendida vamos iterar?
+		ou até obter um padrão maximal*/
+
+		/*Pegar o tipo de viga a ser trabalhado*/
+		int TIPO_ATUAL = ORDEM_TIPOS[iterador_ordem];
+
+		/*Estrutura para atualizar a demanda atual*/
+		Padrao DEMANDA_ATUAL;
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+		//cout << "Tipo " << TIPO_ATUAL << endl;
+
+		/*Itera nas formas*/
+		while (true)/*Até a demanda do tipo ser atendida*/ {
+
+			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
+			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
+				FORMAS_ACUM.end()));
+			/*cout << "\n\t\t" << endl;
+			for (int forma = 0; forma < M; forma++)
+			{
+			cout << FORMAS_ACUM[forma] << " ";
+			}
+			cout << endl;
+			getchar();*/
+
+			//------------------PRINT
+			//cout << "\t Forma " << FORMA_ATUAL << endl;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+
+			/*Inicia a forma com o padrão vazio*/
+			Padrao Padrao_ATUAL;
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+			/*Itera os tamanhos
+			Encher a forma até o talo*/
+			int tamanho_escolhido = 0;
+			while (true)/*Até a forma estar cheia vamos iterar*/ {
+				/*Ainda cabe mais um? Se sim, incrementa*/
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
+						break;
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
+
+					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
+					toda bonitinha*/
+					DEMANDA_ATUAL.tamanhos[tamanho_escolhido]++;
+				}
+
+
+				/*cout << "\t\t";
+				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
+				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
+				cout << endl;
+				getchar();*/
+
+				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
+					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+					break;
+				else
+					tamanho_escolhido++;
+			}//end while
+
+			OPERACAO op_aux;
+			op_aux.FORMA = FORMA_ATUAL;
+			op_aux.PADRAO_OP = Padrao_ATUAL;
+
+			list_operacao.push_back(op_aux);
+
+			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+				break;
+		}// end while
+
+	}
+
+	for (auto &elemento : list_operacao)
+		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
+
+
+	//for (auto elemento : list_operacao) {
+	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
+	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
+	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
+	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
+	//	//getchar();
+	//}
+
+
+	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
+	*/
+	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
+	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
+	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
+	//getchar();
+	delete[]ORDEM_TIPOS;
+
+	return list_operacao;
+}
+
+list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
+	//J'ai une demande de betons et je veux en mettre dans les formes 
+	//dans l'ordre 'premier la plus grosse'
+	//Comment est-ce que je fais les structures?
+
+
+	//Ordenar os tipos de viga em ordem crescente de tempo de cura
+	int *ORDEM_TIPOS = new int[C];	//Guarda ordem dos tipos
+	bool *USOU_OU_NAO = new bool[C];	/*Booleanos para dizer se o
+										tipo de viga já foi alocado
+										no vetor de ordens ou não*/
+	for (int i = 0; i < C; i++) {/*Inicializar os dois vetores*/
+		ORDEM_TIPOS[i] = -1;
+		USOU_OU_NAO[i] = false;
+	}
+
+
+	/*Ordena os tipos por tempo de cura de ordem crescente*/
+	for (int contador = 0; contador < C; contador++) {
+		int tipo;
+		int maior = -1;
+		for (int i = 0; i < C; i++) {
+			if (Viga[i].e > maior && !USOU_OU_NAO[i]) {
+				maior = Viga[i].e;
+				tipo = i;
+			}/*Se tipo i tem tempo de cura menor e ainda não foi
+			 usado*/
+		}
+		ORDEM_TIPOS[contador] = tipo; //Menor tipo não usado é alocado
+		USOU_OU_NAO[tipo] = true;	//Atualizar tipo escolhido nos booleanos
+	}
+	delete[]USOU_OU_NAO; /*Vetor utilizado só na ordenação, então
+						 não é mais necessário*/
+
+						 /*Brainstorming de estruturas
+						 Criar uma estrutura de utilização de formas
+						 Lista para tempos acumulados das formas
+						 Lista de operações
+						 Estrutura para o padrao atual na forma escolhida
+						 Estrutura para a demanda atual atendida*/
+	vector<int> FORMAS_ACUM(M);
+	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
+
+
+
+	list<OPERACAO> list_operacao;
+
+	/*Para cada tipo*/
+	for (int iterador_ordem = 0; iterador_ordem < C; iterador_ordem++) {
+		/*Até ter a demanda atendida vamos iterar?
+		ou até obter um padrão maximal*/
+
+		/*Pegar o tipo de viga a ser trabalhado*/
+		int TIPO_ATUAL = ORDEM_TIPOS[iterador_ordem];
+
+		/*Estrutura para atualizar a demanda atual*/
+		Padrao DEMANDA_ATUAL;
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+		//cout << "Tipo " << TIPO_ATUAL << endl;
+
+		/*Itera nas formas*/
+		while (true)/*Até a demanda do tipo ser atendida*/ {
+
+			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
+			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
+				FORMAS_ACUM.end()));
+			/*cout << "\n\t\t" << endl;
+			for (int forma = 0; forma < M; forma++)
+			{
+			cout << FORMAS_ACUM[forma] << " ";
+			}
+			cout << endl;
+			getchar();*/
+
+			//------------------PRINT
+			//cout << "\t Forma " << FORMA_ATUAL << endl;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+
+			/*Inicia a forma com o padrão vazio*/
+			Padrao Padrao_ATUAL;
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+			/*Itera os tamanhos
+			Encher a forma até o talo*/
+			/*______________________________________________________________________
+			Aqui muda a prioridade do tamanho para escolher as vigas maiores primeiro
+			______________________________________________________________________*/
+			int tamanho_escolhido = Padrao_ATUAL.k - 1;
+			while (true)/*Até a forma estar cheia vamos iterar*/ {
+				/*Ainda cabe mais um? Se sim, incrementa*/
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
+						break;
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
+
+					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
+					toda bonitinha*/
+					DEMANDA_ATUAL.tamanhos[tamanho_escolhido]++;
+				}
+
+
+				/*cout << "\t\t";
+				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
+				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
+				cout << endl;
+				getchar();*/
+
+				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
+					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+					break;
+				/*______________________________________________________________________
+				Aqui muda a prioridade do tamanho para escolher as vigas maiores primeiro
+				______________________________________________________________________*/
+				else
+					tamanho_escolhido--;
+
+			}//end while
+
+			OPERACAO op_aux;
+			op_aux.FORMA = FORMA_ATUAL;
+			op_aux.PADRAO_OP = Padrao_ATUAL;
+
+			list_operacao.push_back(op_aux);
+
+			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+				break;
+		}// end while
+
+	}
+
+	for (auto &elemento : list_operacao)
+		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
+
+
+	//for (auto elemento : list_operacao) {
+	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
+	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
+	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
+	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
+	//	//getchar();
+	//}
+
+
+	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
+	*/
+	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
+	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
+	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
+	//getchar();
+	delete[]ORDEM_TIPOS;
+
+	return list_operacao;
+}
+
+
+list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_ALTERNE() {
+	//J'ai une demande de betons et je veux en mettre dans les formes 
+	//dans l'ordre 'premier la plus petite'
+	//Comment est-ce que je fais les structures?
+
+
+	//Ordenar os tipos de viga em ordem crescente de tempo de cura
+	int *ORDEM_TIPOS = new int[C];	//Guarda ordem dos tipos
+	bool *USOU_OU_NAO = new bool[C];	/*Booleanos para dizer se o
+										tipo de viga já foi alocado
+										no vetor de ordens ou não*/
+	for (int i = 0; i < C; i++) {/*Inicializar os dois vetores*/
+		ORDEM_TIPOS[i] = -1;
+		USOU_OU_NAO[i] = false;
+	}
+
+	for (int contador = 0; contador < C; contador++) {
+		int tipo;
+		int maior = -1;
+		for (int i = 0; i < C; i++) {
+			if (Viga[i].e > maior && !USOU_OU_NAO[i]) {
+				maior = Viga[i].e;
+				tipo = i;
+			}/*Se tipo i tem tempo de cura menor e ainda não foi
+			 usado*/
+		}
+		ORDEM_TIPOS[contador] = tipo; //Menor tipo não usado é alocado
+		USOU_OU_NAO[tipo] = true;	//Atualizar tipo escolhido nos booleanos
+	}
+	delete[]USOU_OU_NAO; /*Vetor utilizado só na ordenação, então
+						 não é mais necessário*/
+
+						 /*Brainstorming de estruturas
+						 Criar uma estrutura de utilização de formas
+						 Lista para tempos acumulados das formas
+						 Lista de operações
+						 Estrutura para o padrao atual na forma escolhida
+						 Estrutura para a demanda atual atendida*/
+	vector<int> FORMAS_ACUM(M);
+	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
+
+
+
+	list<OPERACAO> list_operacao;
+
+	/*Para cada tipo*/
+	for (int iterador_ordem = 0; iterador_ordem < C; iterador_ordem++) {
+		/*Até ter a demanda atendida vamos iterar?
+		ou até obter um padrão maximal*/
+
+		/*Pegar o tipo de viga a ser trabalhado*/
+		int TIPO_ATUAL = ORDEM_TIPOS[iterador_ordem];
+
+		/*Estrutura para atualizar a demanda atual*/
+		Padrao DEMANDA_ATUAL;
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+		//cout << "Tipo " << TIPO_ATUAL << endl;
+
+		/*Itera nas formas*/
+		while (true)/*Até a demanda do tipo ser atendida*/ {
+
+			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
+			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
+				FORMAS_ACUM.end()));
+			/*cout << "\n\t\t" << endl;
+			for (int forma = 0; forma < M; forma++)
+			{
+			cout << FORMAS_ACUM[forma] << " ";
+			}
+			cout << endl;
+			getchar();*/
+
+			//------------------PRINT
+			//cout << "\t Forma " << FORMA_ATUAL << endl;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+
+			/*Inicia a forma com o padrão vazio*/
+			Padrao Padrao_ATUAL;
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+			/*Itera os tamanhos
+			Encher a forma até o talo*/
+			int tamanho_escolhido_menor = 0;
+			int tamanho_escolhido_maior = Viga[TIPO_ATUAL].k - 1;
+			int iterador = 0;
+			while (true)/*Até a forma estar cheia vamos iterar*/ {
+				iterador++;
+				int tamanho_escolhido = iterador % 2 ? tamanho_escolhido_maior : tamanho_escolhido_menor;
+				/*Ainda cabe mais um? Se sim, incrementa*/
+
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
+						break;
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
+
+					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
+					toda bonitinha*/
+					DEMANDA_ATUAL.tamanhos[tamanho_escolhido]++;
+				}
+
+
+				/*cout << "\t\t";
+				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
+				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
+				cout << endl;
+				getchar();*/
+
+				if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+					break;
+
+				if (maximal(Padrao_ATUAL, c_[FORMA_ATUAL])
+					|| tamanho_escolhido_maior <= tamanho_escolhido_menor)
+					break;
+				else
+					(iterador % 2) ? tamanho_escolhido_maior-- : tamanho_escolhido_menor++;
+			}//end while
+
+			OPERACAO op_aux;
+			op_aux.FORMA = FORMA_ATUAL;
+			op_aux.PADRAO_OP = Padrao_ATUAL;
+
+			list_operacao.push_back(op_aux);
+
+			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+				break;
+		}// end while
+
+	}
+
+	for (auto &elemento : list_operacao)
+		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
+
+
+	//for (auto elemento : list_operacao) {
+	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
+	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
+	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
+	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
+	//	//getchar();
+	//}
+
+
+	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
+	*/
+	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
+	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
+	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
+	//getchar();
+	delete[]ORDEM_TIPOS;
+
+	return list_operacao;
+}
+
+list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
+	//J'ai une demande de betons et je veux en mettre dans les formes 
+	//dans l'ordre 'premier la plus petite'
+	//Comment est-ce que je fais les structures?
+
+
+	//Ordenar os tipos de viga em ordem crescente de tempo de cura
+	int *ORDEM_TIPOS = new int[C];	//Guarda ordem dos tipos
+	bool *USOU_OU_NAO = new bool[C];	/*Booleanos para dizer se o
+										tipo de viga já foi alocado
+										no vetor de ordens ou não*/
+	for (int i = 0; i < C; i++) {/*Inicializar os dois vetores*/
+		ORDEM_TIPOS[i] = -1;
+		USOU_OU_NAO[i] = false;
+	}
+
+	for (int contador = 0; contador < C; contador++) {
+		int tipo;
+		int menor = 100;
+		for (int i = 0; i < C; i++) {
+			if (Viga[i].e < menor && !USOU_OU_NAO[i]) {
+				menor = Viga[i].e;
+				tipo = i;
+			}/*Se tipo i tem tempo de cura menor e ainda não foi
+			 usado*/
+		}
+		ORDEM_TIPOS[contador] = tipo; //Menor tipo não usado é alocado
+		USOU_OU_NAO[tipo] = true;	//Atualizar tipo escolhido nos booleanos
+	}
+	delete[]USOU_OU_NAO; /*Vetor utilizado só na ordenação, então
+						 não é mais necessário*/
+
+						 /*Brainstorming de estruturas
+						 Criar uma estrutura de utilização de formas
+						 Lista para tempos acumulados das formas
+						 Lista de operações
+						 Estrutura para o padrao atual na forma escolhida
+						 Estrutura para a demanda atual atendida*/
+	vector<int> FORMAS_ACUM(M);
+	for (int i = 0; i < M; i++) FORMAS_ACUM[i] = 0;
+
+
+
+	list<OPERACAO> list_operacao;
+
+	/*Para cada tipo*/
+	for (int iterador_ordem = 0; iterador_ordem < C; iterador_ordem++) {
+		/*Até ter a demanda atendida vamos iterar?
+		ou até obter um padrão maximal*/
+
+		/*Pegar o tipo de viga a ser trabalhado*/
+		int TIPO_ATUAL = ORDEM_TIPOS[iterador_ordem];
+
+		/*Estrutura para atualizar a demanda atual*/
+		Padrao DEMANDA_ATUAL;
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+		//cout << "Tipo " << TIPO_ATUAL << endl;
+
+		/*Itera nas formas*/
+		while (true)/*Até a demanda do tipo ser atendida*/ {
+
+			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
+			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
+				FORMAS_ACUM.end()));
+			/*cout << "\n\t\t" << endl;
+			for (int forma = 0; forma < M; forma++)
+			{
+			cout << FORMAS_ACUM[forma] << " ";
+			}
+			cout << endl;
+			getchar();*/
+
+			//------------------PRINT
+			//cout << "\t Forma " << FORMA_ATUAL << endl;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+
+			/*Inicia a forma com o padrão vazio*/
+			Padrao Padrao_ATUAL;
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+
+			/*Itera os tamanhos
+			Encher a forma até o talo*/
+			int tamanho_escolhido_menor = 0;
+			int tamanho_escolhido_maior = Viga[TIPO_ATUAL].k - 1;
+			int iterador = 0;
+			while (true)/*Até a forma estar cheia vamos iterar*/ {
+				iterador++;
+				int tamanho_escolhido = iterador % 2 ? tamanho_escolhido_maior : tamanho_escolhido_menor;
+				/*Ainda cabe mais um? Se sim, incrementa*/
+
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
+						break;
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
+
+					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
+					toda bonitinha*/
+					DEMANDA_ATUAL.tamanhos[tamanho_escolhido]++;
+				}
+
+
+				/*cout << "\t\t";
+				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
+				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
+				cout << endl;
+				getchar();*/
+
+				if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+					break;
+
+				if (maximal(Padrao_ATUAL, c_[FORMA_ATUAL])
+					|| tamanho_escolhido_maior <= tamanho_escolhido_menor)
+					break;
+				else
+					(iterador % 2) ? tamanho_escolhido_maior-- : tamanho_escolhido_menor++;
+			}//end while
+
+			OPERACAO op_aux;
+			op_aux.FORMA = FORMA_ATUAL;
+			op_aux.PADRAO_OP = Padrao_ATUAL;
+
+			list_operacao.push_back(op_aux);
+
+			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
+				break;
+		}// end while
+
+	}
+
+	for (auto &elemento : list_operacao)
+		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
+
+
+	//for (auto elemento : list_operacao) {
+	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
+	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
+	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
+	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
+	//	//getchar();
+	//}
+
+
+	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
+	*/
+	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
+	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
+	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
+	//getchar();
+	delete[]ORDEM_TIPOS;
+
+	return list_operacao;
+}
+
+void Problema_Vigas::imprimir_resultados()
+{
+	ofstream resultados("heuristicas.txt", fstream::app);
+
+	list<OPERACAO> SOLUCOES;
+	resultados << endl << instancia_nome;
+	SOLUCOES = HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
+	resultados << "\n\tSTSL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
+		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
+		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+
+	SOLUCOES = HEURISTIQUE_PLUS_VITE_PLUS_GROSSES();
+	resultados << "\n\tSTGL\t " << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
+		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
+		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+
+	SOLUCOES = HEURISTIQUE_MOINS_VITE_PLUS_PETITES();
+	resultados << "\n\tGTSL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
+		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
+		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+
+	SOLUCOES = HEURISTIQUE_MOINS_VITE_PLUS_GROSSES();
+	resultados << "\n\tGTGL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
+		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
+		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+
+	SOLUCOES = HEURISTIQUE_PLUS_VITE_ALTERNE();
+	resultados << "\n\tSTAL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
+		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
+		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+
+	SOLUCOES = HEURISTIQUE_MOINS_VITE_ALTERNE();
+	resultados << "\n\tGTAL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
+		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
+		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+
+
+	resultados.close();
+}
 
 /*
 Próximos passos:
-	Criar uma função que transforma os padrões retornados em maximais com preferências
-	em fazer vigas maiores; Ok
-	Visualizar o Gantt; Agora tô sem saco
-	Calcular as funções objetivo; OK para o makespan
+Criar uma função que transforma os padrões retornados em maximais com preferências
+em fazer vigas maiores; Ok
+Visualizar o Gantt; Agora tô sem saco
+Calcular as funções objetivo; OK para o makespan
 */
-
+/*__________________________________________________________________________________________
+HEURISTICAS
+__________________________________________________________________________________________*/
 
 
 list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	list<Padrao> conjunto;
 	list<Padrao> conjunto2;
-	
+
 	for (int i = 0; i < P; i++) {
 		Padroes_Par[i].n_cobre_naocobertos = cobre_naocobertos(conjunto, Padroes_Par[i], 10);
 		conjunto2.push_back(Padroes_Par[i]);
@@ -357,29 +1169,29 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	conjunto2.sort(operador_padrao);	//ordena em ordem descrescente de numero de padroes cobertos
 
 
-	//conjunto2.sort(operador_padrao_naocobertos);
+										//conjunto2.sort(operador_padrao_naocobertos);
 
 	int contador = 0;
 	/*while (!cobre_tudo_kvezes(conjunto, 10))
 	{
-		conjunto.push_back(conjunto2.front());
-		conjunto2.pop_front();
-		for(auto elemento: conjunto2)
-			elemento.n_cobre_naocobertos = cobre_naocobertos(conjunto, elemento, 10);
-		conjunto2.sort(operador_padrao_naocobertos);
-		contador++;
+	conjunto.push_back(conjunto2.front());
+	conjunto2.pop_front();
+	for(auto elemento: conjunto2)
+	elemento.n_cobre_naocobertos = cobre_naocobertos(conjunto, elemento, 10);
+	conjunto2.sort(operador_padrao_naocobertos);
+	contador++;
 	}*/
 
 
 	Padrao *Padroes_ret;
-	
+
 	for (auto elemento : conjunto2) {
-		if (elemento.n_cobertos == elemento.k){
+		if (elemento.n_cobertos == elemento.k) {
 			conjunto.push_back(elemento);
 			contador++;
 		}
 		/*if (contador > P / 10)
-			break;*/
+		break;*/
 	}
 
 	//for (int c = 0; c < C; c++){
@@ -395,28 +1207,28 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	//		}
 	//	}
 	//}
-	
+
 
 	/*for (int c = 0; c < C; c++) {
-		for (int tam = 0; tam < Viga[c].k; tam++) {
-			contador = 0;
-			for (auto elemento : conjunto2) {
-				if (elemento.contem(tam) && elemento.tipo == c) {
-					bool contido = false;
-					for (auto padrao_dentro : conjunto)
-						if (elemento.id == padrao_dentro.id)
-							contido = true;
-					if (!contido) {
-						conjunto.push_back(elemento);
-						contador++;
-					}
-					if(contador > Viga[c].k*P/100)
-						break;
-				}
-			}
-		}
+	for (int tam = 0; tam < Viga[c].k; tam++) {
+	contador = 0;
+	for (auto elemento : conjunto2) {
+	if (elemento.contem(tam) && elemento.tipo == c) {
+	bool contido = false;
+	for (auto padrao_dentro : conjunto)
+	if (elemento.id == padrao_dentro.id)
+	contido = true;
+	if (!contido) {
+	conjunto.push_back(elemento);
+	contador++;
+	}
+	if(contador > Viga[c].k*P/100)
+	break;
+	}
+	}
+	}
 	}*/
-	
+
 	conjunto.push_front(Padroes_Par[0]);
 	conjunto.unique();
 	//for (auto elemento : conjunto) {
@@ -427,7 +1239,7 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	//}
 
 	cout << conjunto.size() << endl;
-	
+
 	return conjunto;
 }
 
@@ -449,7 +1261,7 @@ void Problema_Vigas::Substituir_Padroes(list<Padrao> lista) {
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 void Problema_Vigas::iniciar_variaveis() {
-	
+
 	//z = IloIntVar(env, 0, T);
 	char strnum[30];
 
@@ -491,6 +1303,19 @@ void Problema_Vigas::iniciar_variaveis() {
 }
 
 
+void Problema_Vigas::CALCULAR_LB() {
+	double soma = 0;
+
+	for (int i = 0; i < C; i++) {
+		for (int kachan = 0; kachan < Viga[i].k; kachan++) {
+			soma += Viga[i].d[kachan] * Viga[i].l[kachan] * Viga[i].e;
+		}
+	}
+
+	cout << "\n\t\t Minimo de tempos" << soma / 60 << endl;
+
+}
+
 //lembrete: c_ eh um vetor de double
 void Problema_Vigas::funcao_objetivo() {
 	IloInt m, i, t;
@@ -530,7 +1355,7 @@ void Problema_Vigas::funcao_objetivo3() {
 			for (i = 1; i < P; i++)
 				if (Pattern[i].cap <= c_[m] && maximal(Pattern[i], c_[m]))
 					FO += x[i][m][t];
-			FO + x[0][m][t];
+			FO += x[0][m][t];
 		}
 
 	model.add(IloMinimize(env, FO)).setName("FO");
@@ -658,16 +1483,16 @@ void Problema_Vigas::restricoes_z() {
 	{
 
 
-		for (m = 0; m < M; m++) {
-			IloExpr expr(env);
-			for (i = 1; i < P; i++)
-				if (maximal(Pattern[i], c_[m]) && (Pattern[i].cap <= c_[m]))
-					expr += x[i][m][t];
-			expr += x[0][m][t];
+	for (m = 0; m < M; m++) {
+	IloExpr expr(env);
+	for (i = 1; i < P; i++)
+	if (maximal(Pattern[i], c_[m]) && (Pattern[i].cap <= c_[m]))
+	expr += x[i][m][t];
+	expr += x[0][m][t];
 
-			model.add(z >= (t + 1) * expr);
-			expr.end();
-		}
+	model.add(z >= (t + 1) * expr);
+	expr.end();
+	}
 	}*/
 }
 
@@ -681,16 +1506,16 @@ void Problema_Vigas::simetria() {
 					soma1 += i*x[i][m][t];
 
 
-			
-			for (alpha = 1; alpha < T - t; alpha++){
-				for (i = 1; i < P; i++) 
+
+			for (alpha = 1; alpha < T - t; alpha++) {
+				for (i = 1; i < P; i++)
 					if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m]))
 						soma2 += i*x[i][m][t + alpha];
 
 				model.add(soma1 <= soma2 + P * x[0][m][t + alpha]);
 				soma2.clear();
 			}
-			
+
 			soma1.clear();
 		}
 
@@ -703,7 +1528,7 @@ void Problema_Vigas::simetria() {
 		for (alpha = 1; alpha < M - m; alpha++) {
 			for (t = 0; t < T; t++)
 				for (i = 1; i < P; i++)
-					if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m+alpha]))
+					if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m + alpha]))
 						soma2 += i*(t + 1)*x[i][m + alpha][t];
 
 			model.add(soma1 <= soma2);
@@ -758,7 +1583,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 
 	double sobra = 0;
 
-	
+
 
 	//return;
 	cplex.out() << "Status da solucao = " << cplex.getStatus() << endl;
@@ -830,8 +1655,8 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 					cout << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[i].tipo].e - 0.01 << ",Type " << Pattern[i].tipo + 1 << endl;
 					usou = true;
 				}
-		if(!usou)
-			cout << m+1 << "," << 0 << "," << T << ",Type 0" << endl;
+		if (!usou)
+			cout << m + 1 << "," << 0 << "," << T << ",Type 0" << endl;
 	}
 	for (int m = 0; m < M; m++) {
 		txtsolu << internal << setw(nameWidth) << setfill(separator) << m;
@@ -913,7 +1738,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 		for (int m = 0; m < M; m++)
 			for (int i = 1; i < P; i++)
 				if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1)
-					sobra +=  (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
+					sobra += (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
 	txtsolu << "\n sobra2=" << sobra << endl;
 
 	double *sobra_dia = new double[T];
@@ -925,8 +1750,8 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 		for (int m = 0; m < M; m++) {
 			for (int i = 1; i < P; i++)
 				if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1) {
-					for (int a = 0; a <  Viga[Pattern[i].tipo].e; a++)
-						sobra_dia[t+a] += (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
+					for (int a = 0; a < Viga[Pattern[i].tipo].e; a++)
+						sobra_dia[t + a] += (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
 				}
 		}
 	}
@@ -966,13 +1791,13 @@ bool Problema_Vigas::verificacao() {
 	for (int m = 0; m < M; m++)
 		for (int t = 0; t < T; t++)
 			for (int i = 1; i < P; i++)
-				if (maximal(Pattern[i], c_[m])) 
-					if (cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1)) 
+				if (maximal(Pattern[i], c_[m]))
+					if (cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1))
 						if (Viga[Pattern[i].tipo].e > 1 && (t + Viga[Pattern[i].tipo].e) < T)
 							for (int a = 1; a < Viga[Pattern[i].tipo].e; a++)
 								if (cplex.getValue(x[0][m][t + a]) != 1)
 									return false;
-					
+
 
 
 	//apenas um padrão??
@@ -1046,7 +1871,7 @@ void Problema_Vigas::iniciar_lp(int fo, ofstream& resultados) {
 		restricoes_demanda();
 
 		restricoes_sequenciamento();
-		
+
 		//simetria();
 
 		cout << "Olar" << endl;
@@ -1081,7 +1906,7 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados << instancia_nome << "\t";
 	try {
 		iniciar_variaveis();
-		
+
 		iniciar_lp(fo, resultados);
 		//exportar_lp();                   //criar arquivo .lp
 		cout << "\n\n\nResolvendo Linear... \n\n";
@@ -1090,22 +1915,22 @@ void Problema_Vigas::RODAR(int fo) {
 		timeused(&time);
 
 		cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << time << endl;
-		
+
 		imprimir_solucao(resultados);
 		resultados << "	" << time;
 	}
 	catch (...) {
 		cerr << endl << "\n Erro na resolucao da linear" << endl;
 	}
-	
-	
+
+
 	resultados.close();
 	//env.end();
 	resultados.open("resultados.txt", fstream::app);
 
 	try {
 		iniciar_variaveis();
-		
+
 		iniciar_lp(fo, resultados);
 		//exportar_lp();                   //criar arquivo .lp
 		cout << "\n\n\nResolvendo Inteira... \n\n";
@@ -1120,7 +1945,7 @@ void Problema_Vigas::RODAR(int fo) {
 	catch (...) {
 		cerr << endl << "\n Erro na resolucao da inteira" << endl;
 	}
-	
+
 
 	resultados << endl;
 

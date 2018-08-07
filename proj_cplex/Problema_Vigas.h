@@ -40,6 +40,8 @@ private:
 
 	void iniciar_variaveis();
 
+
+
 	//lembrete: c_ eh um vetor de double
 	void funcao_objetivo();
 
@@ -77,7 +79,7 @@ private:
 	
 
 public:
-
+	void CALCULAR_LB();
 	void RODAR(int fo);
 	
 	Problema_Vigas(const char* filename, const char* filename2);
@@ -97,6 +99,8 @@ public:
 
 	list<OPERACAO> HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
 
+	list<OPERACAO> HEURISTIQUE_PLUS_VITE_PLUS_GROSSES();
+
 	double CALCULAR_MAKESPAN_OP(list<OPERACAO> LISTA_PAT);
 
 	double CALCULAR_SOBRA_OP(list<OPERACAO> LISTA_PAT);
@@ -106,6 +110,16 @@ public:
 //	void TRANSFORMAR_em_MAXIMAL(Padrao & P, double & FORMA_cap);
 
 	void TRANSFORMAR_em_MAXIMAL(Padrao & P, double FORMA_cap);
+
+	list<OPERACAO> HEURISTIQUE_MOINS_VITE_PLUS_PETITES();
+
+	list<OPERACAO> HEURISTIQUE_MOINS_VITE_PLUS_GROSSES();
+
+	list<OPERACAO> HEURISTIQUE_MOINS_VITE_ALTERNE();
+
+	list<OPERACAO> HEURISTIQUE_PLUS_VITE_ALTERNE();
+
+	void imprimir_resultados();
 
 
 
