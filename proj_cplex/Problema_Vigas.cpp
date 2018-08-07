@@ -2,7 +2,6 @@
 #include "Problema_Vigas.h"
 
 
-
 /*
 	OBS: trocar tudo de ponteiro para vector
 */
@@ -188,7 +187,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 		Padrao DEMANDA_ATUAL;
 		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
 
-		cout << "Tipo " << TIPO_ATUAL << endl;
+		//cout << "Tipo " << TIPO_ATUAL << endl;
 
 		/*Itera nas formas*/
 		while (true)/*Até a demanda do tipo ser atendida*/{
@@ -196,8 +195,16 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
 			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
 				FORMAS_ACUM.end()));
-
-			cout << "\t Forma " << FORMA_ATUAL << endl;
+			/*cout << "\n\t\t" << endl;
+			for (int forma = 0; forma < M; forma++)
+			{
+				cout << FORMAS_ACUM[forma] << " ";
+			}
+			cout << endl;
+			getchar();*/
+			
+			//------------------PRINT
+			//cout << "\t Forma " << FORMA_ATUAL << endl;
 			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
 
 			/*Inicia a forma com o padrão vazio*/
@@ -221,11 +228,11 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 				}
 				
 				
-				cout << "\t\t";
+				/*cout << "\t\t";
 				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
 					cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
 				cout << endl;
-				getchar();
+				getchar();*/
 
 				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
 					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
@@ -233,6 +240,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 				else
 					tamanho_escolhido++;
 			}//end while
+			
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
@@ -241,30 +249,87 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 
 			if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 				break;
-			
-			/*Salvar o padrao que associado à forma*/
 		}// end while
-		for(auto elemento:)
 		
 	}
 
+	for (auto &elemento : list_operacao)
+		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
+
+
+	for (auto elemento : list_operacao) {
+		cout << "\t\t Forma: " << elemento.FORMA << " - ";
+		for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
+			cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
+		cout << "------" << elemento.PADRAO_OP.cap << endl;
+		//getchar();
+	}
 
 
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
 	*/
-
-	delete []ORDEM_TIPOS; //
+	cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
+	cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
+	cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
+	getchar();
+	delete []ORDEM_TIPOS; 
 
 	return list_operacao;
 }
+
+/*ok*/
+double Problema_Vigas::CALCULAR_MAKESPAN_OP(list<OPERACAO> LISTA_PAT) {
+	
+	double makespan = 0;
+	vector<int> FORMAS_TEMPO_ACUM(M);
+
+	for (int i = 0; i < M; i++)
+		FORMAS_TEMPO_ACUM[i] = 0;
+	
+	for (auto elemento : LISTA_PAT) {
+		FORMAS_TEMPO_ACUM[elemento.FORMA] += Viga[elemento.PADRAO_OP.tipo].e;
+		
+		if (FORMAS_TEMPO_ACUM[elemento.FORMA] >= makespan) {
+			makespan = FORMAS_TEMPO_ACUM[elemento.FORMA];
+		}
+
+	}
+	return makespan;
+}
+
+
+double Problema_Vigas::CALCULAR_SOBRA_OP(list<OPERACAO> LISTA_PAT) {
+
+	double sobra = 0;
+
+	for (auto elemento : LISTA_PAT)
+		sobra += (c_[elemento.FORMA] - elemento.PADRAO_OP.cap)* Viga[elemento.PADRAO_OP.tipo].e;
+	cout << "\nsize :" << sizeof(LISTA_PAT) << endl;
+	return sobra;
+}
+
+double Problema_Vigas::CALCULAR_TOTALCT_OP(list<OPERACAO> LISTA_PAT) {
+
+	double total_ct = 0;
+	vector<int> FORMAS_TEMPO_ACUM(M);
+
+	for (auto elemento : LISTA_PAT)
+		total_ct += Viga[elemento.PADRAO_OP.tipo].e;
+
+	return total_ct;
+}
+
+
 /*	PRESTE ATENÇÃO QUE TUDO EM RELAÇÃO AOS TAMANHOS DOS PADRÕES ESTÁ CONSIDERENDO QUE ELES JÁ
 ESTÃO ORDENADOS NA INSTÂNCIA*/
-void Problema_Vigas::TRANSFORMAR_em_MAXIMAL(Padrao P, double FORMA_cap) {
+void Problema_Vigas::TRANSFORMAR_em_MAXIMAL(Padrao &P, double FORMA_cap) {
 	int contador = 1;
-	
+	/*Vou adicionando da maior para a menor viga*/
 	while (!maximal(P, FORMA_cap)){
-		if (P.cap + Viga[P.tipo].l[P.k - contador] <= FORMA_cap)
+		if (P.cap + Viga[P.tipo].l[P.k - contador] <= FORMA_cap) {
 			P.tamanhos[P.k - contador]++;
+			P.cap += Viga[P.tipo].l[P.k - contador];
+		}
 		else
 			contador++;
 	}
@@ -274,9 +339,9 @@ void Problema_Vigas::TRANSFORMAR_em_MAXIMAL(Padrao P, double FORMA_cap) {
 /*
 Próximos passos:
 	Criar uma função que transforma os padrões retornados em maximais com preferências
-	em fazer vigas maiores;
-	Visualizar o Gantt;
-	Calcular as funções objetivo;
+	em fazer vigas maiores; Ok
+	Visualizar o Gantt; Agora tô sem saco
+	Calcular as funções objetivo; OK para o makespan
 */
 
 

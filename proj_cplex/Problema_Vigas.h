@@ -1,4 +1,5 @@
 #pragma once
+#include "OPERACAO.h"
 #include "Padrao.h"
 #include "Tipo_Viga.h"
 #include <list>
@@ -6,7 +7,7 @@
 #include <fstream>
 #include <set>
 #include <ilcplex/ilocplex.h>
-#include "OPERACAO.h"
+
 
 
 using namespace std;
@@ -96,7 +97,16 @@ public:
 
 	list<OPERACAO> HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
 
-	void TRANSFORMAR_em_MAXIMAL(Padrao P, double FORMA_cap);
+	double CALCULAR_MAKESPAN_OP(list<OPERACAO> LISTA_PAT);
+
+	double CALCULAR_SOBRA_OP(list<OPERACAO> LISTA_PAT);
+
+	double CALCULAR_TOTALCT_OP(list<OPERACAO> LISTA_PAT);
+
+//	void TRANSFORMAR_em_MAXIMAL(Padrao & P, double & FORMA_cap);
+
+	void TRANSFORMAR_em_MAXIMAL(Padrao & P, double FORMA_cap);
+
 
 
 
