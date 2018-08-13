@@ -81,7 +81,9 @@ private:
 public:
 	void CALCULAR_LB();
 	void RODAR(int fo);
-	
+
+	void function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao_heuristica,
+		const char* nome_saida);
 	Problema_Vigas(const char* filename, const char* filename2);
 	void Substituir_Padroes(list<Padrao>);
 	list<Padrao> gerar_conj(Padrao *Conjunto);
@@ -119,7 +121,7 @@ public:
 
 	list<OPERACAO> HEURISTIQUE_PLUS_VITE_ALTERNE();
 
-	void imprimir_resultados();
+	void imprimir_resultados_heuristicas();
 
 
 

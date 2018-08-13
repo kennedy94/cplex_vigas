@@ -246,6 +246,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
 
 			list_operacao.push_back(op_aux);
 
@@ -402,6 +403,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
 
 			list_operacao.push_back(op_aux);
 
@@ -606,6 +608,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_PETITES() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
 
 			list_operacao.push_back(op_aux);
 
@@ -762,6 +765,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
 
 			list_operacao.push_back(op_aux);
 
@@ -918,6 +922,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_ALTERNE() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
 
 			list_operacao.push_back(op_aux);
 
@@ -1073,6 +1078,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
 
 			list_operacao.push_back(op_aux);
 
@@ -1106,41 +1112,49 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
 	return list_operacao;
 }
 
-void Problema_Vigas::imprimir_resultados()
+void Problema_Vigas::imprimir_resultados_heuristicas()
 {
 	ofstream resultados("heuristicas.txt", fstream::app);
 
 	list<OPERACAO> SOLUCOES;
+
 	resultados << endl << instancia_nome;
 	SOLUCOES = HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
 	resultados << "\n\tSTSL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
 		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "STSL");
 
 	SOLUCOES = HEURISTIQUE_PLUS_VITE_PLUS_GROSSES();
 	resultados << "\n\tSTGL\t " << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
 		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "STGL");
 
 	SOLUCOES = HEURISTIQUE_MOINS_VITE_PLUS_PETITES();
 	resultados << "\n\tGTSL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
 		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "GTSL");
 
 	SOLUCOES = HEURISTIQUE_MOINS_VITE_PLUS_GROSSES();
 	resultados << "\n\tGTGL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
 		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "GTGL");
 
 	SOLUCOES = HEURISTIQUE_PLUS_VITE_ALTERNE();
 	resultados << "\n\tSTAL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
 		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "STAL");
+
 
 	SOLUCOES = HEURISTIQUE_MOINS_VITE_ALTERNE();
 	resultados << "\n\tGTAL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
 		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "GTAL");
 
 
 	resultados.close();
@@ -1581,6 +1595,8 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	else
 		resultados << "	" << cplex.getObjValue() << "	" << cplex.getNnodes() << "	" << cplex.getMIPRelativeGap();
 
+	return;
+
 	double sobra = 0;
 
 
@@ -1592,7 +1608,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	cplex.out() << "#Nos de BB  = " << cplex.getNnodes() << endl;
 	cout << "\n     Funcao Objetivo: " << cplex.getObjValue() << endl;
 
-	bool imprimir = 1;
+	bool imprimir = 0;
 	if (imprimir) {
 		int contador = 1;
 		for (int t = 0; t < T; t++) {
@@ -1950,4 +1966,168 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados << endl;
 
 	resultados.close();
+}
+
+
+void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao_heuristica,
+	const char* nome_saida) {
+
+	string arquivo_saida = ".solu";
+
+	stringstream ss;
+	ss << instancia_nome <<"_"<< nome_saida << arquivo_saida;
+	arquivo_saida = ss.str();
+
+	ofstream txtsolu;
+	txtsolu.open(arquivo_saida, fstream::trunc);
+
+	txtsolu << "  \"Gantt\" " << endl << endl;
+	const char separator = ' ';
+	const char separator2 = '_';
+	const int nameWidth = 6;
+	//const int numWidth      = 8;
+
+
+
+	/*Associando o id dos padrões das heurísticas aos padrões que estão no arquivo de padrões*/
+
+	for (auto &elemento : solucao_heuristica) {
+		for (int i = 1; i < P; i++) {
+			if (Pattern[i].tipo != elemento.PADRAO_OP.tipo)
+				continue;
+
+			int k;
+			for (k = 0; k < elemento.PADRAO_OP.k; k++) {
+				if (Pattern[i].tamanhos[k] != elemento.PADRAO_OP.tamanhos[k])
+					break;
+			}
+			if (k == elemento.PADRAO_OP.k)
+				elemento.PADRAO_OP.id = i;
+		}
+	}
+
+	vector<int> FORMAS_ACUM(M);
+	for (int m = 0; m < M; m++)
+		FORMAS_ACUM[m] = 0;
+	int T_folgado = T + 0.25*T;
+	vector<vector<int>> Matrix_X(M);
+	for (int i = 0; i < M; i++)
+		Matrix_X[i].resize(T_folgado);
+
+	for (int m = 0; m < M; m++) {
+		for (int t = 0; t < T_folgado; t++)
+			Matrix_X[m][t] = -1;
+	}
+
+
+	//povoar a matriz X
+	for (auto &elemento : solucao_heuristica) {
+		Matrix_X[elemento.FORMA][elemento.TEMPO] = elemento.PADRAO_OP.id;
+
+		for (int t = 1; t < Viga[elemento.PADRAO_OP.tipo].e; t++)
+			Matrix_X[elemento.FORMA][elemento.TEMPO + t] = 0;
+
+	}
+
+	//Imprimindo o Gantt
+	for (int t = 0; t <= T_folgado; t++)
+		txtsolu << internal << setw(nameWidth) << setfill(separator2) << separator2;
+	txtsolu << endl;
+	txtsolu << internal << setw(nameWidth) << setfill(separator) << separator;
+	for (int t = 0; t < T_folgado; t++)
+		txtsolu << internal << setw(nameWidth) << setfill(separator) << t;
+	txtsolu << endl;
+	for (int t = 0; t <= T_folgado; t++)
+		txtsolu << internal << setw(nameWidth) << setfill(separator2) << separator2;
+	txtsolu << endl << endl;
+
+
+	for (int m = 0; m < M; m++) {
+		txtsolu << internal << setw(nameWidth) << setfill(separator) << m;
+		for (int t = 0; t < T_folgado; t++) {
+
+			if(Matrix_X[m][t] != -1)
+				txtsolu << internal << setw(nameWidth) << setfill(separator) << Matrix_X[m][t];
+			else
+				txtsolu << internal << setw(nameWidth) << setfill(separator) << " ";
+		}
+		txtsolu << endl;
+	}
+
+
+	for (int t = 0; t <= T_folgado; t++)
+		txtsolu << internal << setw(nameWidth) << setfill(separator2) << separator2;
+	txtsolu << endl << endl;
+
+
+
+
+	txtsolu << "Vigas excedentes: " << endl << endl;
+
+	for (int c = 0; c < C; ++c) {
+		txtsolu << "Tipo " << c << endl;
+		for (int k_ = 0; k_ < Viga[c].k; k_++) {
+			int soma = 0;
+
+			for (auto &elemento : solucao_heuristica) {
+				if (elemento.PADRAO_OP.tipo == c && elemento.PADRAO_OP.id > 0)
+					soma += elemento.PADRAO_OP.tamanhos[k_];
+			}
+
+			txtsolu << " " << soma - Viga[c].d[k_];
+		}
+		txtsolu << endl;
+	}
+
+
+	double sobra = 0;
+
+	for (int t = 0; t < T_folgado; t++) {
+		for (int m = 0; m < M; m++)
+			if (Matrix_X[m][t] > 0)
+				sobra += Viga[Pattern[Matrix_X[m][t]].tipo].e * (c_[m] - Pattern[Matrix_X[m][t]].cap);
+	}
+	txtsolu << "\n sobra=" << sobra << endl;
+
+	sobra = 0;
+	for (int t = 0; t < T_folgado; t++) {
+		for (int m = 0; m < M; m++)
+			if (Matrix_X[m][t] > 0)
+				sobra += (c_[m] - Pattern[Matrix_X[m][t]].cap);
+	}
+	txtsolu << "\n sobra2=" << sobra << endl;
+
+	double *sobra_dia = new double[T_folgado];
+	for (int t = 0; t < T_folgado; t++)
+		sobra_dia[t] = 0;
+
+
+	for (int t = 0; t < T_folgado; t++) {
+		for (int m = 0; m < M; m++) {
+			if (Matrix_X[m][t] > 0) {
+				for (int a = 0; a < Viga[Pattern[Matrix_X[m][t]].tipo].e; a++)
+					sobra_dia[t + a] += (c_[m] - Pattern[Matrix_X[m][t]].cap);
+			}
+		}
+	}
+	for (int t = 0; t < T_folgado; t++)
+		txtsolu << "\n sobra dia" << t << "=" << sobra_dia[t] << endl;
+
+
+	txtsolu << 1 << "," << 0 << "," << T << ",Type 0" << endl;
+	for (int m = 0; m < M; m++) {
+		bool usou = false;
+		for (int t = 0; t < T; t++)
+			if (Matrix_X[m][t] > 0) {
+				txtsolu << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[Matrix_X[m][t]].tipo].e - 0.01
+					<< ",Type " << Pattern[Matrix_X[m][t]].tipo + 1 << endl;
+				usou = true;
+			}
+
+		if (!usou)
+			txtsolu << m + 1 << "," << 0 << "," << T << ",Type 0" << endl;
+	}
+
+
+	txtsolu.close();
 }

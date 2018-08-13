@@ -1,0 +1,12 @@
+#include "OPERACAO.h"
+
+
+
+OPERACAO::OPERACAO()
+{
+}
+
+
+OPERACAO::~OPERACAO()
+{
+}

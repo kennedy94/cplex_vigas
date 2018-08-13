@@ -22,10 +22,10 @@ int main(int argc, char *argv[]) {
 	Problema_Vigas	Prob(inst, xu);
 
 	//Fazer reduction size
-	Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
-	Prob.RODAR(3);
+	//Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
+	//Prob.RODAR(3);
 	cout << "Instância \t" << inst << endl;
-	Prob.imprimir_resultados();
+	Prob.imprimir_resultados_heuristicas();
 	/*Prob.CALCULAR_LB();
 	Prob.HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
 	Prob.HEURISTIQUE_PLUS_VITE_PLUS_GROSSES();
