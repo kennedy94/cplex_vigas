@@ -1182,20 +1182,9 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 	}
 	conjunto2.sort(operador_padrao);	//ordena em ordem descrescente de numero de padroes cobertos
 
-
 										//conjunto2.sort(operador_padrao_naocobertos);
 
 	int contador = 0;
-	/*while (!cobre_tudo_kvezes(conjunto, 10))
-	{
-	conjunto.push_back(conjunto2.front());
-	conjunto2.pop_front();
-	for(auto elemento: conjunto2)
-	elemento.n_cobre_naocobertos = cobre_naocobertos(conjunto, elemento, 10);
-	conjunto2.sort(operador_padrao_naocobertos);
-	contador++;
-	}*/
-
 
 	Padrao *Padroes_ret;
 
@@ -1208,49 +1197,8 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 		break;*/
 	}
 
-	//for (int c = 0; c < C; c++){
-	//	for (int tam = 0; tam < Viga[c].k; tam++){
-	//		for (auto elemento: conjunto2){
-	//			if (cobre(conjunto, c, tam) < 50) {
-	//				if (elemento.contem(tam) && elemento.tipo == c) {
-	//					conjunto.push_back(elemento);
-	//					contador++;
-	//					//break;
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
-
-
-	/*for (int c = 0; c < C; c++) {
-	for (int tam = 0; tam < Viga[c].k; tam++) {
-	contador = 0;
-	for (auto elemento : conjunto2) {
-	if (elemento.contem(tam) && elemento.tipo == c) {
-	bool contido = false;
-	for (auto padrao_dentro : conjunto)
-	if (elemento.id == padrao_dentro.id)
-	contido = true;
-	if (!contido) {
-	conjunto.push_back(elemento);
-	contador++;
-	}
-	if(contador > Viga[c].k*P/100)
-	break;
-	}
-	}
-	}
-	}*/
-
 	conjunto.push_front(Padroes_Par[0]);
 	conjunto.unique();
-	//for (auto elemento : conjunto) {
-	//	cout << elemento.tipo << "\t";
-	//	for (int i = 0; i < elemento.k; i++)
-	//		cout << elemento.tamanhos[i] << " ";
-	//	cout << endl;
-	//}
 
 	cout << conjunto.size() << endl;
 
@@ -1589,13 +1537,13 @@ void Problema_Vigas::revolver_ppl() {
 		throw(-1);
 	}
 }
+
+
 void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	if (relaxacaolinear)
 		resultados << "	" << P_antigo << "	" << P << "	" << cplex.getObjValue();
 	else
 		resultados << "	" << cplex.getObjValue() << "	" << cplex.getNnodes() << "	" << cplex.getMIPRelativeGap();
-
-	return;
 
 	double sobra = 0;
 
@@ -1690,7 +1638,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 						switch (gantt)
 						{
 						case 0:
-							txtsolu << internal << setw(nameWidth) << setfill(separator) << i; //imprimindo numero do padrao
+							txtsolu << internal << setw(nameWidth) << setfill(separator) << Pattern[i].id; //imprimindo numero do padrao
 							break;
 						case 1:
 							//imprimindo sobra
@@ -1969,6 +1917,7 @@ void Problema_Vigas::RODAR(int fo) {
 }
 
 
+/*Só funciona se for com todos os padrões*/
 void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao_heuristica,
 	const char* nome_saida) {
 
@@ -2009,7 +1958,7 @@ void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao
 	vector<int> FORMAS_ACUM(M);
 	for (int m = 0; m < M; m++)
 		FORMAS_ACUM[m] = 0;
-	int T_folgado = T + 0.25*T;
+	int T_folgado = T + 0.30*T;
 	vector<vector<int>> Matrix_X(M);
 	for (int i = 0; i < M; i++)
 		Matrix_X[i].resize(T_folgado);

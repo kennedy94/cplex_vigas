@@ -21,18 +21,15 @@ int main(int argc, char *argv[]) {
 
 	Problema_Vigas	Prob(inst, xu);
 
-	//Fazer reduction size
+	//Fazer size reduction
 	//Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
-	//Prob.RODAR(3);
+	Prob.RODAR(3);
 	cout << "Instância \t" << inst << endl;
-	Prob.imprimir_resultados_heuristicas();
-	/*Prob.CALCULAR_LB();
-	Prob.HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
-	Prob.HEURISTIQUE_PLUS_VITE_PLUS_GROSSES();
-	Prob.HEURISTIQUE_MOINS_VITE_PLUS_PETITES();
-	Prob.HEURISTIQUE_MOINS_VITE_PLUS_GROSSES();
-	Prob.HEURISTIQUE_PLUS_VITE_ALTERNE();
-	Prob.HEURISTIQUE_MOINS_VITE_ALTERNE();*/
+	Prob.~Problema_Vigas();
+
+	/*Problema_Vigas	Prob(inst, xu);
+	Prob.imprimir_resultados_heuristicas();*/
+
 	
 	//getchar();
 	return 0;
