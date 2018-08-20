@@ -19,16 +19,16 @@ int main(int argc, char *argv[]) {
 	strcpy(xu, inst);
 	strcat(xu, ".pat");
 
-	//Problema_Vigas	Prob(inst, xu);
+	Problema_Vigas	Prob(inst, xu);
 
 	//Fazer size reduction
-	//Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
-	/*Prob.RODAR(3);
+	Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
+	Prob.RODAR(3);
 	cout << "Instância \t" << inst << endl;
-	Prob.~Problema_Vigas();*/
+	Prob.~Problema_Vigas();
 
-	Problema_Vigas	Prob(inst, xu);
-	Prob.imprimir_resultados_heuristicas();
+	/*Problema_Vigas	Prob(inst, xu);
+	Prob.imprimir_resultados_heuristicas();*/
 
 	
 	//getchar();
