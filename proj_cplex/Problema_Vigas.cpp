@@ -1,6 +1,7 @@
 
 #include "Problema_Vigas.h"
-
+#include <chrono>
+#include <time.h>
 
 /*
 OBS: trocar tudo de ponteiro para vector
@@ -1118,42 +1119,66 @@ void Problema_Vigas::imprimir_resultados_heuristicas()
 
 	list<OPERACAO> SOLUCOES;
 
+	
+	
+	chrono::duration<double> elapsed;
+
+
 	resultados << endl << instancia_nome;
+
+	auto TEMPO_COMECO = chrono::high_resolution_clock::now();
 	SOLUCOES = HEURISTIQUE_PLUS_VITE_PLUS_PETITES();
-	resultados << "\n\tSTSL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
+	auto TEMPO_FIM = chrono::high_resolution_clock::now();
+	elapsed = TEMPO_FIM - TEMPO_COMECO;
+
+		resultados << "\n\tSTSL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
-		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+		<< CALCULAR_TOTALCT_OP(SOLUCOES) << "\t " << elapsed.count();
 	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "STSL");
 
+	TEMPO_COMECO = chrono::high_resolution_clock::now();
 	SOLUCOES = HEURISTIQUE_PLUS_VITE_PLUS_GROSSES();
+	TEMPO_FIM = chrono::high_resolution_clock::now();
+	elapsed = TEMPO_FIM - TEMPO_COMECO;
 	resultados << "\n\tSTGL\t " << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
-		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+		<< CALCULAR_TOTALCT_OP(SOLUCOES) << "\t " << elapsed.count();
 	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "STGL");
 
+	TEMPO_COMECO = chrono::high_resolution_clock::now();
 	SOLUCOES = HEURISTIQUE_MOINS_VITE_PLUS_PETITES();
+	TEMPO_FIM = chrono::high_resolution_clock::now();
+	elapsed = TEMPO_FIM - TEMPO_COMECO;
 	resultados << "\n\tGTSL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
-		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+		<< CALCULAR_TOTALCT_OP(SOLUCOES) << "\t " << elapsed.count();
 	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "GTSL");
 
+	TEMPO_COMECO = chrono::high_resolution_clock::now();
 	SOLUCOES = HEURISTIQUE_MOINS_VITE_PLUS_GROSSES();
+	TEMPO_FIM = chrono::high_resolution_clock::now();
+	elapsed = TEMPO_FIM - TEMPO_COMECO;
 	resultados << "\n\tGTGL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
-		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+		<< CALCULAR_TOTALCT_OP(SOLUCOES) << "\t " << elapsed.count();
 	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "GTGL");
 
+	TEMPO_COMECO = chrono::high_resolution_clock::now();
 	SOLUCOES = HEURISTIQUE_PLUS_VITE_ALTERNE();
+	TEMPO_FIM = chrono::high_resolution_clock::now();
+	elapsed = TEMPO_FIM - TEMPO_COMECO;
 	resultados << "\n\tSTAL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
-		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+		<< CALCULAR_TOTALCT_OP(SOLUCOES) << "\t " << elapsed.count();;
 	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "STAL");
 
-
+	TEMPO_COMECO = chrono::high_resolution_clock::now();
 	SOLUCOES = HEURISTIQUE_MOINS_VITE_ALTERNE();
+	TEMPO_FIM = chrono::high_resolution_clock::now();
+	elapsed = TEMPO_FIM - TEMPO_COMECO;
 	resultados << "\n\tGTAL\t" << CALCULAR_SOBRA_OP(SOLUCOES) << "\t"
 		<< CALCULAR_MAKESPAN_OP(SOLUCOES) << "\t"
-		<< CALCULAR_TOTALCT_OP(SOLUCOES);
+		<< CALCULAR_TOTALCT_OP(SOLUCOES) << "\t " << elapsed.count();
 	function_Solucao_Arquivo_Heuristicas(SOLUCOES, "GTAL");
 
 
