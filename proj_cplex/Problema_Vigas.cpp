@@ -1555,7 +1555,7 @@ void Problema_Vigas::revolver_ppl() {
 	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 3600);
+	cplex.setParam(IloCplex::TiLim, 600);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
@@ -1615,6 +1615,28 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	ofstream txtsolu;
 	txtsolu.open(xu, fstream::trunc);
 
+
+
+
+
+	txtsolu << endl;
+	//imprimir sobra = 1, padrao = 0, tipo do padrao = 2?
+	int gantt = 0;
+	//--------------
+	
+	txtsolu << 1 << "," << 0 << "," << T << ",Type 0" << endl;
+	for (int m = 0; m < M; m++) {
+		bool usou = false;
+		for (int t = 0; t < T; t++)
+			for (int i = 1; i < P; i++)
+				if (maximal(Pattern[i], c_[m]) && cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1)) {
+					txtsolu << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[i].tipo].e - 0.01 << ",Type " << Pattern[i].tipo + 1 << endl;
+					usou = true;
+				}
+		if (!usou)
+			txtsolu << m + 1 << "," << 0 << "," << T << ",Type 0" << endl;
+	}
+
 	txtsolu << "  \"Gantt\" " << endl << endl;
 	const char separator = ' ';
 	const char separator2 = '_';
@@ -1627,26 +1649,9 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	txtsolu << internal << setw(nameWidth) << setfill(separator) << separator;
 	for (int t = 0; t < T; t++)
 		txtsolu << internal << setw(nameWidth) << setfill(separator) << t;
-
-
-
-
-	//imprimir sobra = 1, padrao = 0, tipo do padrao = 2?
-	int gantt = 0;
-	//--------------
 	txtsolu << endl;
-	cout << 1 << "," << 0 << "," << T << ",Type 0" << endl;
-	for (int m = 0; m < M; m++) {
-		bool usou = false;
-		for (int t = 0; t < T; t++)
-			for (int i = 1; i < P; i++)
-				if (maximal(Pattern[i], c_[m]) && cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1)) {
-					cout << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[i].tipo].e - 0.01 << ",Type " << Pattern[i].tipo + 1 << endl;
-					usou = true;
-				}
-		if (!usou)
-			cout << m + 1 << "," << 0 << "," << T << ",Type 0" << endl;
-	}
+
+
 	for (int m = 0; m < M; m++) {
 		txtsolu << internal << setw(nameWidth) << setfill(separator) << m;
 		for (int t = 0; t < T; t++) {
@@ -1983,7 +1988,7 @@ void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao
 	vector<int> FORMAS_ACUM(M);
 	for (int m = 0; m < M; m++)
 		FORMAS_ACUM[m] = 0;
-	int T_folgado = T + 0.30*T;
+	int T_folgado = T + .4*T;
 	vector<vector<int>> Matrix_X(M);
 	for (int i = 0; i < M; i++)
 		Matrix_X[i].resize(T_folgado);
