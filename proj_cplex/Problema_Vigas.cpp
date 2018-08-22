@@ -1712,12 +1712,9 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 							if (maximal(Pattern[i], c_[m]))
 								if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1)
 									soma += Pattern[i].tamanhos[k_];
-
-
 			txtsolu << " " << soma - Viga[c].d[k_];
 		}
 		txtsolu << endl;
-
 	}
 
 	for (int t = 0; t < T; t++)
