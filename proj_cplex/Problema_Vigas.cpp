@@ -8,22 +8,6 @@ OBS: trocar tudo de ponteiro para vector
 */
 #include <algorithm>
 #include <vector>
-void timeused(double *time)
-{
-	static double tstart, tend, tprev;
-
-	if (time == NULL) {
-		clock(); /* one extra call to initialize clock */
-		tstart = tprev = clock();
-	}
-	else {
-		tend = clock();
-		if (tend < tprev)
-			tstart -= ULONG_MAX; /* wraparound occured */
-		tprev = tend;
-		*time = (tend - tstart) / CLOCKS_PER_SEC; /* convert to seconds */
-	}
-}
 
 
 
@@ -1898,17 +1882,22 @@ void Problema_Vigas::RODAR(int fo) {
 	try {
 		iniciar_variaveis();
 
+		
+		
+
 		iniciar_lp(fo, resultados);
 		//exportar_lp();                   //criar arquivo .lp
 		cout << "\n\n\nResolvendo Linear... \n\n";
-		timeused(NULL);
+	
+		auto TEMPO_COMECO = chrono::high_resolution_clock::now();
 		resolver_linear();                    //resolver problema
-		timeused(&time);
-
-		cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << time << endl;
+		auto TEMPO_FIM = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed = TEMPO_FIM - TEMPO_COMECO;
+		cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << elapsed.count()
+			<< endl;
 
 		imprimir_solucao(resultados);
-		resultados << "	" << time;
+		resultados << "	" << elapsed.count();
 	}
 	catch (...) {
 		cerr << endl << "\n Erro na resolucao da linear" << endl;
@@ -1925,13 +1914,15 @@ void Problema_Vigas::RODAR(int fo) {
 		iniciar_lp(fo, resultados);
 		//exportar_lp();                   //criar arquivo .lp
 		cout << "\n\n\nResolvendo Inteira... \n\n";
-		timeused(NULL);
+		auto TEMPO_COMECO = chrono::high_resolution_clock::now();
 		revolver_ppl();                    //resolver problema
-		timeused(&time);
+		auto TEMPO_FIM = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed = TEMPO_FIM - TEMPO_COMECO;
 
 		imprimir_solucao(resultados);
-		resultados << "	" << time;
-		cout << "\n\nTempo Resolucao do CPLEX gasto (Solucao Inteira): " << time << endl;
+		resultados << "	" << elapsed.count();
+		cout << "\n\nTempo Resolucao do CPLEX gasto (Solucao Inteira): " << elapsed.count()
+			<< endl;
 	}
 	catch (...) {
 		cerr << endl << "\n Erro na resolucao da inteira" << endl;
