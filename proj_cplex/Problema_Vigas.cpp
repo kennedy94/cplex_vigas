@@ -1539,7 +1539,7 @@ void Problema_Vigas::revolver_ppl() {
 	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 600);
+	cplex.setParam(IloCplex::TiLim, 3600);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
@@ -1553,6 +1553,10 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 		resultados << "	" << P_antigo << "	" << P << "	" << cplex.getObjValue();
 	else
 		resultados << "	" << cplex.getObjValue() << "	" << cplex.getNnodes() << "	" << cplex.getMIPRelativeGap();
+
+	bool testes_em_massa = 1;
+	if (testes_em_massa)
+		return;
 
 	double sobra = 0;
 
