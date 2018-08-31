@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
 	//Fazer size reduction
 	//Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
-	Prob.RODAR(3);
+	Prob.RODAR(2);
 	cout << "Instância \t" << inst << endl;
 	Prob.~Problema_Vigas();
 

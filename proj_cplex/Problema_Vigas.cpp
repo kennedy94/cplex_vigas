@@ -1338,15 +1338,16 @@ void Problema_Vigas::restricoes_onlyone() {
 	//para cada forma m e periodo de tempo t
 	for (m = 0; m < M; m++) {
 		for (t = 0; t < T; t++) {
-			IloExpr expr(env);
-			expr += x[0][m][t];
+			//IloExpr expr(env);
+			IloNumVarArray auxiliar(env);
+
+			auxiliar.add(x[0][m][t]);
 			for (i = 1; i < P; i++) {
 				if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m])) {
-					expr += x[i][m][t];
+					auxiliar.add(x[i][m][t]);
 				}
 			}
-			model.add(expr <= 1).setName("Um Padrao");
-			expr.end();
+			model.add(IloSOS1(env, auxiliar)).setName("Um Padrao");
 		}
 	}
 }
@@ -1555,8 +1556,9 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 		resultados << "	" << cplex.getObjValue() << "	" << cplex.getNnodes() << "	" << cplex.getMIPRelativeGap();
 
 	bool testes_em_massa = 1;
-	if (testes_em_massa)
-		return;
+	
+
+	
 
 	double sobra = 0;
 
@@ -1593,10 +1595,10 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	if (relaxacaolinear)
 		return;
 
-	//cout << "Variaveis sem preprocessamento: " << numvar << endl;
-	//cout << "Variaveis com preprocessamento: " << numvarP << endl << endl;
 
-	// usando a biblioteca "#include <iomanip>"
+	if (testes_em_massa)
+		return;
+
 	char xu[100];
 	strcpy(xu, instancia_nome);
 	strcat(xu, ".solu");
@@ -1883,29 +1885,29 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados.open("resultados.txt", fstream::app);
 	resultados << endl;
 	resultados << instancia_nome << "\t";
-	try {
-		iniciar_variaveis();
+	//try {
+	//	iniciar_variaveis();
 
-		
-		
+	//	
+	//	
 
-		iniciar_lp(fo, resultados);
-		//exportar_lp();                   //criar arquivo .lp
-		cout << "\n\n\nResolvendo Linear... \n\n";
-	
-		auto TEMPO_COMECO = chrono::high_resolution_clock::now();
-		resolver_linear();                    //resolver problema
-		auto TEMPO_FIM = chrono::high_resolution_clock::now();
-		chrono::duration<double> elapsed = TEMPO_FIM - TEMPO_COMECO;
-		cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << elapsed.count()
-			<< endl;
+	//	iniciar_lp(fo, resultados);
+	//	//exportar_lp();                   //criar arquivo .lp
+	//	cout << "\n\n\nResolvendo Linear... \n\n";
+	//
+	//	auto TEMPO_COMECO = chrono::high_resolution_clock::now();
+	//	resolver_linear();                    //resolver problema
+	//	auto TEMPO_FIM = chrono::high_resolution_clock::now();
+	//	chrono::duration<double> elapsed = TEMPO_FIM - TEMPO_COMECO;
+	//	cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << elapsed.count()
+	//		<< endl;
 
-		imprimir_solucao(resultados);
-		resultados << "	" << elapsed.count();
-	}
-	catch (...) {
-		cerr << endl << "\n Erro na resolucao da linear" << endl;
-	}
+	//	imprimir_solucao(resultados);
+	//	resultados << "	" << elapsed.count();
+	//}
+	//catch (...) {
+	//	cerr << endl << "\n Erro na resolucao da linear" << endl;
+	//}
 
 
 	resultados.close();
