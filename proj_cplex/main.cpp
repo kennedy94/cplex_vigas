@@ -22,8 +22,8 @@ int main(int argc, char *argv[]) {
 	Problema_Vigas	Prob(inst, xu);
 
 	//Fazer size reduction
-	//Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
-	Prob.RODAR(2);
+	Prob.Substituir_Padroes(Prob.gerar_conj(Prob.get_Padroes()));
+	Prob.RODAR(3);
 	cout << "Instância \t" << inst << endl;
 	Prob.~Problema_Vigas();
 
