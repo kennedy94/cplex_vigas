@@ -27,13 +27,13 @@ Problema_Vigas::Problema_Vigas(const char* filename, const char* filename2) {
 	c_ = new double[M];
 	Viga = new Tipo_Viga[C];
 	for (int i = 0; i < C; ++i) {
-		instancia >> Viga[i].e >> Viga[i].k;
-		Viga[i].l = new double[Viga[i].k];
-		Viga[i].d = new int[Viga[i].k];
-		for (int j = 0; j < Viga[i].k; j++)
-			instancia >> Viga[i].l[j];
-		for (int j = 0; j < Viga[i].k; j++)
-			instancia >> Viga[i].d[j];
+		instancia >> Viga[i].tempo_cura >> Viga[i].n_comprimentos;
+		Viga[i].comprimentos = vector<double>(Viga[i].n_comprimentos);
+		Viga[i].demandas = vector<int>(Viga[i].n_comprimentos);
+		for (int j = 0; j < Viga[i].n_comprimentos; j++)
+			instancia >> Viga[i].comprimentos[j];
+		for (int j = 0; j < Viga[i].n_comprimentos; j++)
+			instancia >> Viga[i].demandas[j];
 	}
 	for (int i = 0; i < M; i++)
 		instancia >> c_[i];
@@ -49,16 +49,16 @@ Problema_Vigas::Problema_Vigas(const char* filename, const char* filename2) {
 	Pattern = new Padrao[P];
 
 	for (int i = 0; i < P; i++) {
-		padroes >> Pattern[i].tipo;
+		padroes >> Pattern[i].tipo >> Pattern[i].cap;
 		Pattern[i].id = i;
-		Pattern[i].tamanhos = new int[Viga[Pattern[i].tipo].k];
-		double capa = 0;
-		for (int j = 0; j < Viga[Pattern[i].tipo].k; j++) {
+		
+
+		Pattern[i].tamanhos =vector<int>(Viga[Pattern[i].tipo].n_comprimentos);
+
+		for (int j = 0; j < Viga[Pattern[i].tipo].n_comprimentos; j++) {
 			padroes >> Pattern[i].tamanhos[j];
-			capa += Pattern[i].tamanhos[j] * Viga[Pattern[i].tipo].l[j];
 		}
-		Pattern[i].cap = capa;
-		Pattern[i].k = Viga[Pattern[i].tipo].k;
+		Pattern[i].k = Viga[Pattern[i].tipo].n_comprimentos;
 		Pattern[i].contar();
 
 	}
@@ -94,7 +94,7 @@ bool Problema_Vigas::cobre_tudo_kvezes(list<Padrao> conj, int vezes) {
 		return false;
 
 	for (int c = 0; c < C; c++)
-		for (int tam = 0; tam < Viga[c].k; tam++)
+		for (int tam = 0; tam < Viga[c].n_comprimentos; tam++)
 			if (cobre(conj, c, tam) < vezes)
 				return false;
 
@@ -137,8 +137,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 		int tipo;
 		int menor = 100;
 		for (int i = 0; i < C; i++) {
-			if (Viga[i].e < menor && !USOU_OU_NAO[i]) {
-				menor = Viga[i].e;
+			if (Viga[i].tempo_cura < menor && !USOU_OU_NAO[i]) {
+				menor = Viga[i].tempo_cura;
 				tipo = i;
 			}/*Se tipo i tem tempo de cura menor e ainda não foi
 			 usado*/
@@ -172,9 +172,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 
 		/*Estrutura para atualizar a demanda atual*/
 		Padrao DEMANDA_ATUAL;
-		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
-		//cout << "Tipo " << TIPO_ATUAL << endl;
 
 		/*Itera nas formas*/
 		while (true)/*Até a demanda do tipo ser atendida*/ {
@@ -182,31 +181,23 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
 			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
 				FORMAS_ACUM.end()));
-			/*cout << "\n\t\t" << endl;
-			for (int forma = 0; forma < M; forma++)
-			{
-			cout << FORMAS_ACUM[forma] << " ";
-			}
-			cout << endl;
-			getchar();*/
 
-			//------------------PRINT
-			//cout << "\t Forma " << FORMA_ATUAL << endl;
-			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].tempo_cura;
 
 			/*Inicia a forma com o padrão vazio*/
 			Padrao Padrao_ATUAL;
-			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
 			/*Itera os tamanhos
 			Encher a forma até o talo*/
 			int tamanho_escolhido = 0;
 			while (true)/*Até a forma estar cheia vamos iterar*/ {
 				/*Ainda cabe mais um? Se sim, incrementa*/
-				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
 					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
 						break;
-					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido];
 					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
 
 					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
@@ -215,13 +206,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 				}
 
 
-				/*cout << "\t\t";
-				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
-				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
-				cout << endl;
-				getchar();*/
-
-				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
+				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] > c_[FORMA_ATUAL] ||
 					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 					break;
 				else
@@ -231,7 +216,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
-			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].tempo_cura;
 
 			list_operacao.push_back(op_aux);
 
@@ -245,21 +230,11 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_PETITES() {
 		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
 
 
-	//for (auto elemento : list_operacao) {
-	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
-	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
-	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
-	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
-	//	//getchar();
-	//}
 
 
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
 	*/
-	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
-	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
-	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
-	//getchar();
+
 	delete[]ORDEM_TIPOS;
 
 	return list_operacao;
@@ -287,8 +262,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
 		int tipo;
 		int menor = 100;
 		for (int i = 0; i < C; i++) {
-			if (Viga[i].e < menor && !USOU_OU_NAO[i]) {
-				menor = Viga[i].e;
+			if (Viga[i].tempo_cura < menor && !USOU_OU_NAO[i]) {
+				menor = Viga[i].tempo_cura;
 				tipo = i;
 			}/*Se tipo i tem tempo de cura menor e ainda não foi
 			 usado*/
@@ -322,9 +297,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
 
 		/*Estrutura para atualizar a demanda atual*/
 		Padrao DEMANDA_ATUAL;
-		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
-		//cout << "Tipo " << TIPO_ATUAL << endl;
 
 		/*Itera nas formas*/
 		while (true)/*Até a demanda do tipo ser atendida*/ {
@@ -332,21 +306,13 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
 			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
 			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
 				FORMAS_ACUM.end()));
-			/*cout << "\n\t\t" << endl;
-			for (int forma = 0; forma < M; forma++)
-			{
-			cout << FORMAS_ACUM[forma] << " ";
-			}
-			cout << endl;
-			getchar();*/
 
-			//------------------PRINT
-			//cout << "\t Forma " << FORMA_ATUAL << endl;
-			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].tempo_cura;
 
 			/*Inicia a forma com o padrão vazio*/
 			Padrao Padrao_ATUAL;
-			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
 			/*Itera os tamanhos
 			Encher a forma até o talo*/
@@ -356,10 +322,10 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
 			int tamanho_escolhido = Padrao_ATUAL.k - 1;
 			while (true)/*Até a forma estar cheia vamos iterar*/ {
 				/*Ainda cabe mais um? Se sim, incrementa*/
-				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
 					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
 						break;
-					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido];
 					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
 
 					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
@@ -368,13 +334,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
 				}
 
 
-				/*cout << "\t\t";
-				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
-				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
-				cout << endl;
-				getchar();*/
-
-				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
+				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] > c_[FORMA_ATUAL] ||
 					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 					break;
 				/*______________________________________________________________________
@@ -388,7 +348,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
-			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].tempo_cura;
 
 			list_operacao.push_back(op_aux);
 
@@ -401,22 +361,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_PLUS_GROSSES() {
 	for (auto &elemento : list_operacao)
 		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
 
-
-	//for (auto elemento : list_operacao) {
-	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
-	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
-	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
-	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
-	//	//getchar();
-	//}
-
-
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
 	*/
-	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
-	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
-	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
-	//getchar();
 	delete[]ORDEM_TIPOS;
 
 	return list_operacao;
@@ -432,7 +378,7 @@ double Problema_Vigas::CALCULAR_MAKESPAN_OP(list<OPERACAO> LISTA_PAT) {
 		FORMAS_TEMPO_ACUM[i] = 0;
 
 	for (auto elemento : LISTA_PAT) {
-		FORMAS_TEMPO_ACUM[elemento.FORMA] += Viga[elemento.PADRAO_OP.tipo].e;
+		FORMAS_TEMPO_ACUM[elemento.FORMA] += Viga[elemento.PADRAO_OP.tipo].tempo_cura;
 
 		if (FORMAS_TEMPO_ACUM[elemento.FORMA] >= makespan) {
 			makespan = FORMAS_TEMPO_ACUM[elemento.FORMA];
@@ -447,7 +393,7 @@ double Problema_Vigas::CALCULAR_SOBRA_OP(list<OPERACAO> LISTA_PAT) {
 	double sobra = 0;
 
 	for (auto elemento : LISTA_PAT)
-		sobra += (c_[elemento.FORMA] - elemento.PADRAO_OP.cap)* Viga[elemento.PADRAO_OP.tipo].e;
+		sobra += (c_[elemento.FORMA] - elemento.PADRAO_OP.cap)* Viga[elemento.PADRAO_OP.tipo].tempo_cura;
 
 	return sobra;
 }
@@ -458,7 +404,7 @@ double Problema_Vigas::CALCULAR_TOTALCT_OP(list<OPERACAO> LISTA_PAT) {
 	vector<int> FORMAS_TEMPO_ACUM(M);
 
 	for (auto elemento : LISTA_PAT)
-		total_ct += Viga[elemento.PADRAO_OP.tipo].e;
+		total_ct += Viga[elemento.PADRAO_OP.tipo].tempo_cura;
 
 	return total_ct;
 }
@@ -470,9 +416,9 @@ void Problema_Vigas::TRANSFORMAR_em_MAXIMAL(Padrao &P, double FORMA_cap) {
 	int contador = 1;
 	/*Vou adicionando da maior para a menor viga*/
 	while (!maximal(P, FORMA_cap)) {
-		if (P.cap + Viga[P.tipo].l[P.k - contador] <= FORMA_cap) {
+		if (P.cap + Viga[P.tipo].comprimentos[P.k - contador] <= FORMA_cap) {
 			P.tamanhos[P.k - contador]++;
-			P.cap += Viga[P.tipo].l[P.k - contador];
+			P.cap += Viga[P.tipo].comprimentos[P.k - contador];
 		}
 		else
 			contador++;
@@ -499,8 +445,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_PETITES() {
 		int tipo;
 		int maior = -1;
 		for (int i = 0; i < C; i++) {
-			if (Viga[i].e > maior && !USOU_OU_NAO[i]) {
-				maior = Viga[i].e;
+			if (Viga[i].tempo_cura > maior && !USOU_OU_NAO[i]) {
+				maior = Viga[i].tempo_cura;
 				tipo = i;
 			}/*Se tipo i tem tempo de cura menor e ainda não foi
 			 usado*/
@@ -534,9 +480,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_PETITES() {
 
 		/*Estrutura para atualizar a demanda atual*/
 		Padrao DEMANDA_ATUAL;
-		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
-		//cout << "Tipo " << TIPO_ATUAL << endl;
 
 		/*Itera nas formas*/
 		while (true)/*Até a demanda do tipo ser atendida*/ {
@@ -544,31 +489,25 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_PETITES() {
 			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
 			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
 				FORMAS_ACUM.end()));
-			/*cout << "\n\t\t" << endl;
-			for (int forma = 0; forma < M; forma++)
-			{
-			cout << FORMAS_ACUM[forma] << " ";
-			}
-			cout << endl;
-			getchar();*/
+
 
 			//------------------PRINT
 			//cout << "\t Forma " << FORMA_ATUAL << endl;
-			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].tempo_cura;
 
 			/*Inicia a forma com o padrão vazio*/
 			Padrao Padrao_ATUAL;
-			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
 			/*Itera os tamanhos
 			Encher a forma até o talo*/
 			int tamanho_escolhido = 0;
 			while (true)/*Até a forma estar cheia vamos iterar*/ {
 				/*Ainda cabe mais um? Se sim, incrementa*/
-				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
 					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
 						break;
-					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido];
 					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
 
 					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
@@ -577,13 +516,9 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_PETITES() {
 				}
 
 
-				/*cout << "\t\t";
-				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
-				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
-				cout << endl;
-				getchar();*/
 
-				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
+
+				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] > c_[FORMA_ATUAL] ||
 					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 					break;
 				else
@@ -593,7 +528,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_PETITES() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
-			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].tempo_cura;
 
 			list_operacao.push_back(op_aux);
 
@@ -607,21 +542,10 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_PETITES() {
 		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
 
 
-	//for (auto elemento : list_operacao) {
-	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
-	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
-	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
-	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
-	//	//getchar();
-	//}
-
 
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
 	*/
-	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
-	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
-	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
-	//getchar();
+
 	delete[]ORDEM_TIPOS;
 
 	return list_operacao;
@@ -649,8 +573,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
 		int tipo;
 		int maior = -1;
 		for (int i = 0; i < C; i++) {
-			if (Viga[i].e > maior && !USOU_OU_NAO[i]) {
-				maior = Viga[i].e;
+			if (Viga[i].tempo_cura > maior && !USOU_OU_NAO[i]) {
+				maior = Viga[i].tempo_cura;
 				tipo = i;
 			}/*Se tipo i tem tempo de cura menor e ainda não foi
 			 usado*/
@@ -684,9 +608,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
 
 		/*Estrutura para atualizar a demanda atual*/
 		Padrao DEMANDA_ATUAL;
-		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
-
-		//cout << "Tipo " << TIPO_ATUAL << endl;
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
 		/*Itera nas formas*/
 		while (true)/*Até a demanda do tipo ser atendida*/ {
@@ -694,21 +616,12 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
 			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
 			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
 				FORMAS_ACUM.end()));
-			/*cout << "\n\t\t" << endl;
-			for (int forma = 0; forma < M; forma++)
-			{
-			cout << FORMAS_ACUM[forma] << " ";
-			}
-			cout << endl;
-			getchar();*/
 
-			//------------------PRINT
-			//cout << "\t Forma " << FORMA_ATUAL << endl;
-			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].tempo_cura;
 
 			/*Inicia a forma com o padrão vazio*/
 			Padrao Padrao_ATUAL;
-			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
 			/*Itera os tamanhos
 			Encher a forma até o talo*/
@@ -718,10 +631,10 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
 			int tamanho_escolhido = Padrao_ATUAL.k - 1;
 			while (true)/*Até a forma estar cheia vamos iterar*/ {
 				/*Ainda cabe mais um? Se sim, incrementa*/
-				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
 					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
 						break;
-					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido];
 					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
 
 					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
@@ -730,13 +643,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
 				}
 
 
-				/*cout << "\t\t";
-				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
-				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
-				cout << endl;
-				getchar();*/
-
-				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] > c_[FORMA_ATUAL] ||
+				if (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] > c_[FORMA_ATUAL] ||
 					DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 					break;
 				/*______________________________________________________________________
@@ -750,7 +657,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
-			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].tempo_cura;
 
 			list_operacao.push_back(op_aux);
 
@@ -764,21 +671,9 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_PLUS_GROSSES() {
 		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
 
 
-	//for (auto elemento : list_operacao) {
-	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
-	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
-	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
-	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
-	//	//getchar();
-	//}
-
 
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
 	*/
-	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
-	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
-	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
-	//getchar();
 	delete[]ORDEM_TIPOS;
 
 	return list_operacao;
@@ -805,8 +700,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_ALTERNE() {
 		int tipo;
 		int maior = -1;
 		for (int i = 0; i < C; i++) {
-			if (Viga[i].e > maior && !USOU_OU_NAO[i]) {
-				maior = Viga[i].e;
+			if (Viga[i].tempo_cura > maior && !USOU_OU_NAO[i]) {
+				maior = Viga[i].tempo_cura;
 				tipo = i;
 			}/*Se tipo i tem tempo de cura menor e ainda não foi
 			 usado*/
@@ -840,9 +735,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_ALTERNE() {
 
 		/*Estrutura para atualizar a demanda atual*/
 		Padrao DEMANDA_ATUAL;
-		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
-
-		//cout << "Tipo " << TIPO_ATUAL << endl;
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
 		/*Itera nas formas*/
 		while (true)/*Até a demanda do tipo ser atendida*/ {
@@ -850,36 +743,27 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_ALTERNE() {
 			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
 			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
 				FORMAS_ACUM.end()));
-			/*cout << "\n\t\t" << endl;
-			for (int forma = 0; forma < M; forma++)
-			{
-			cout << FORMAS_ACUM[forma] << " ";
-			}
-			cout << endl;
-			getchar();*/
 
-			//------------------PRINT
-			//cout << "\t Forma " << FORMA_ATUAL << endl;
-			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].tempo_cura;
 
 			/*Inicia a forma com o padrão vazio*/
 			Padrao Padrao_ATUAL;
-			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
 			/*Itera os tamanhos
 			Encher a forma até o talo*/
 			int tamanho_escolhido_menor = 0;
-			int tamanho_escolhido_maior = Viga[TIPO_ATUAL].k - 1;
+			int tamanho_escolhido_maior = Viga[TIPO_ATUAL].n_comprimentos - 1;
 			int iterador = 0;
 			while (true)/*Até a forma estar cheia vamos iterar*/ {
 				iterador++;
 				int tamanho_escolhido = iterador % 2 ? tamanho_escolhido_maior : tamanho_escolhido_menor;
 				/*Ainda cabe mais um? Se sim, incrementa*/
 
-				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
 					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
 						break;
-					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido];
 					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
 
 					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
@@ -888,11 +772,6 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_ALTERNE() {
 				}
 
 
-				/*cout << "\t\t";
-				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
-				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
-				cout << endl;
-				getchar();*/
 
 				if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 					break;
@@ -907,7 +786,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_ALTERNE() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
-			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].tempo_cura;
 
 			list_operacao.push_back(op_aux);
 
@@ -921,21 +800,10 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_MOINS_VITE_ALTERNE() {
 		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
 
 
-	//for (auto elemento : list_operacao) {
-	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
-	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
-	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
-	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
-	//	//getchar();
-	//}
-
 
 	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
 	*/
-	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
-	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
-	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
-	//getchar();
+
 	delete[]ORDEM_TIPOS;
 
 	return list_operacao;
@@ -961,8 +829,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
 		int tipo;
 		int menor = 100;
 		for (int i = 0; i < C; i++) {
-			if (Viga[i].e < menor && !USOU_OU_NAO[i]) {
-				menor = Viga[i].e;
+			if (Viga[i].tempo_cura < menor && !USOU_OU_NAO[i]) {
+				menor = Viga[i].tempo_cura;
 				tipo = i;
 			}/*Se tipo i tem tempo de cura menor e ainda não foi
 			 usado*/
@@ -996,9 +864,8 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
 
 		/*Estrutura para atualizar a demanda atual*/
 		Padrao DEMANDA_ATUAL;
-		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+		DEMANDA_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
-		//cout << "Tipo " << TIPO_ATUAL << endl;
 
 		/*Itera nas formas*/
 		while (true)/*Até a demanda do tipo ser atendida*/ {
@@ -1006,36 +873,27 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
 			/*	Pegar a primeira forma livre argmin de FORMA_ACUM	*/
 			int FORMA_ATUAL = distance(FORMAS_ACUM.begin(), min_element(FORMAS_ACUM.begin(),
 				FORMAS_ACUM.end()));
-			/*cout << "\n\t\t" << endl;
-			for (int forma = 0; forma < M; forma++)
-			{
-			cout << FORMAS_ACUM[forma] << " ";
-			}
-			cout << endl;
-			getchar();*/
 
-			//------------------PRINT
-			//cout << "\t Forma " << FORMA_ATUAL << endl;
-			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].e;
+			FORMAS_ACUM[FORMA_ATUAL] += Viga[TIPO_ATUAL].tempo_cura;
 
 			/*Inicia a forma com o padrão vazio*/
 			Padrao Padrao_ATUAL;
-			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].k, TIPO_ATUAL);
+			Padrao_ATUAL.alocar_PADRAO(Viga[TIPO_ATUAL].n_comprimentos, TIPO_ATUAL);
 
 			/*Itera os tamanhos
 			Encher a forma até o talo*/
 			int tamanho_escolhido_menor = 0;
-			int tamanho_escolhido_maior = Viga[TIPO_ATUAL].k - 1;
+			int tamanho_escolhido_maior = Viga[TIPO_ATUAL].n_comprimentos - 1;
 			int iterador = 0;
 			while (true)/*Até a forma estar cheia vamos iterar*/ {
 				iterador++;
 				int tamanho_escolhido = iterador % 2 ? tamanho_escolhido_maior : tamanho_escolhido_menor;
 				/*Ainda cabe mais um? Se sim, incrementa*/
 
-				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].l[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
+				while (Padrao_ATUAL.cap + Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido] <= c_[FORMA_ATUAL]) {
 					if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL], tamanho_escolhido))
 						break;
-					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].l[tamanho_escolhido];
+					Padrao_ATUAL.cap += Viga[TIPO_ATUAL].comprimentos[tamanho_escolhido];
 					Padrao_ATUAL.tamanhos[tamanho_escolhido]++;
 
 					/*Auxilar só para checar se a demanda foi atingida então não precisa criar a estrutura
@@ -1044,11 +902,6 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
 				}
 
 
-				/*cout << "\t\t";
-				for (int iter_print = 0; iter_print < Padrao_ATUAL.k; iter_print++)
-				cout << Padrao_ATUAL.tamanhos[iter_print] << " ";
-				cout << endl;
-				getchar();*/
 
 				if (DEMANDA_ATUAL.comparar_demandas(Viga[TIPO_ATUAL]))
 					break;
@@ -1063,7 +916,7 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
 			OPERACAO op_aux;
 			op_aux.FORMA = FORMA_ATUAL;
 			op_aux.PADRAO_OP = Padrao_ATUAL;
-			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].e;
+			op_aux.TEMPO = FORMAS_ACUM[FORMA_ATUAL] - Viga[Padrao_ATUAL.tipo].tempo_cura;
 
 			list_operacao.push_back(op_aux);
 
@@ -1077,21 +930,6 @@ list<OPERACAO> Problema_Vigas::HEURISTIQUE_PLUS_VITE_ALTERNE() {
 		TRANSFORMAR_em_MAXIMAL(elemento.PADRAO_OP, c_[elemento.FORMA]);
 
 
-	//for (auto elemento : list_operacao) {
-	//	cout << "\t\t Forma: " << elemento.FORMA << " - ";
-	//	for (int iter_print = 0; iter_print < elemento.PADRAO_OP.k; iter_print++)
-	//		cout << elemento.PADRAO_OP.tamanhos[iter_print] << " ";
-	//	cout << "------" << elemento.PADRAO_OP.cap << endl;
-	//	//getchar();
-	//}
-
-
-	/*Vamos percorrer os tipos em ordem crescente de tempos de cura.
-	*/
-	//cout << "\n\tMakespan: " << CALCULAR_MAKESPAN_OP(list_operacao);
-	//cout << "\n\tIddleness: " << CALCULAR_SOBRA_OP(list_operacao);
-	//cout << "\n\tTotal Completion Time: " << CALCULAR_TOTALCT_OP(list_operacao);
-	//getchar();
 	delete[]ORDEM_TIPOS;
 
 	return list_operacao;
@@ -1216,7 +1054,7 @@ list<Padrao> Problema_Vigas::gerar_conj(Padrao *Padroes_Par) {
 
 void Problema_Vigas::Substituir_Padroes(list<Padrao> lista) {
 	P_antigo = P;
-	delete Pattern;
+	//delete Pattern;
 	Pattern = new Padrao[lista.size()];
 	P = lista.size();
 	int i = 0;
@@ -1278,8 +1116,8 @@ void Problema_Vigas::CALCULAR_LB() {
 	double soma = 0;
 
 	for (int i = 0; i < C; i++) {
-		for (int kachan = 0; kachan < Viga[i].k; kachan++) {
-			soma += Viga[i].d[kachan] * Viga[i].l[kachan] * Viga[i].e;
+		for (int kachan = 0; kachan < Viga[i].n_comprimentos; kachan++) {
+			soma += Viga[i].demandas[kachan] * Viga[i].comprimentos[kachan] * Viga[i].tempo_cura;
 		}
 	}
 
@@ -1297,7 +1135,7 @@ void Problema_Vigas::funcao_objetivo() {
 		for (t = 0; t < T; t++)
 			for (i = 1; i < P; i++)
 				if (Pattern[i].cap <= c_[m] && maximal(Pattern[i], c_[m]))
-					costSum += Viga[Pattern[i].tipo].e * (c_[m] - Pattern[i].cap) * x[i][m][t];
+					costSum += Viga[Pattern[i].tipo].tempo_cura * (c_[m] - Pattern[i].cap) * x[i][m][t];
 
 
 	model.add(IloMinimize(env, costSum)).setName("FO");
@@ -1356,20 +1194,20 @@ void Problema_Vigas::restricoes_demanda() {
 	IloInt c, k, m, t, i;
 	//Para cada tipo de viga e tamanhos dentro do tipo de viga
 	for (c = 0; c < C; c++) {
-		for (k = 0; k < Viga[c].k; k++) {
+		for (k = 0; k < Viga[c].n_comprimentos; k++) {
 			//sum
 			IloExpr expr(env);
 			//problema: alguns problemas não estão gerando padrões com a última demanda
 			for (m = 0; m < M; ++m) {
 				for (i = 1; i < P; ++i) {
-					for (t = 0; t < T - Viga[Pattern[i].tipo].e + 1; ++t) {
+					for (t = 0; t < T - Viga[Pattern[i].tipo].tempo_cura + 1; ++t) {
 						if (Pattern[i].cap <= c_[m] && Pattern[i].tipo == c && maximal(Pattern[i], c_[m])) {
 							expr += Pattern[i].tamanhos[k] * x[i][m][t];
 						}
 					}
 				}
 			}
-			model.add(expr >= Viga[c].d[k]).setName("Demanda");
+			model.add(expr >= Viga[c].demandas[k]).setName("Demanda");
 			expr.end();
 		}
 	}
@@ -1380,13 +1218,13 @@ void Problema_Vigas::restricoes_sequenciamento() {
 	for (m = 0; m < M; ++m)
 		for (i = 1; i < P; ++i)
 			if (Pattern[i].cap <= c_[m] && maximal(Pattern[i], c_[m]))
-				for (t = 0; t < T - Viga[Pattern[i].tipo].e + 1; t++) {
+				for (t = 0; t < T - Viga[Pattern[i].tipo].tempo_cura + 1; t++) {
 
-					if (Viga[Pattern[i].tipo].e != 1) {
+					if (Viga[Pattern[i].tipo].tempo_cura != 1) {
 						IloExpr expr(env);
-						for (a = 1; a <= Viga[Pattern[i].tipo].e - 1; a++)
+						for (a = 1; a <= Viga[Pattern[i].tipo].tempo_cura - 1; a++)
 							expr += x[0][m][t + a];
-						model.add((Viga[Pattern[i].tipo].e - 1) * x[i][m][t] <= expr).setName("problema");
+						model.add((Viga[Pattern[i].tipo].tempo_cura - 1) * x[i][m][t] <= expr).setName("problema");
 						expr.end();
 					}
 
@@ -1395,8 +1233,8 @@ void Problema_Vigas::restricoes_sequenciamento() {
 
 	int R = 0;
 	for (int c = 0; c < C; c++)
-		if (Viga[c].e > R)
-			R = Viga[c].e;
+		if (Viga[c].tempo_cura > R)
+			R = Viga[c].tempo_cura;
 
 	for (t = 0; t < T; t++)
 		for (m = 0; m < M; m++) {
@@ -1405,7 +1243,7 @@ void Problema_Vigas::restricoes_sequenciamento() {
 			for (int beta = 2; beta <= R; beta++)
 				for (j = beta; j <= R; j++)
 					for (i = 0; i < P; i++)
-						if (Pattern[i].cap <= c_[m] && maximal(Pattern[i], c_[m]) && Viga[Pattern[i].tipo].e == j && t - beta + 1 >= 0)
+						if (Pattern[i].cap <= c_[m] && maximal(Pattern[i], c_[m]) && Viga[Pattern[i].tipo].tempo_cura == j && t - beta + 1 >= 0)
 							expr += x[i][m][t - beta + 1];
 
 			model.add(x[0][m][t] <= expr).setName("oi");
@@ -1535,12 +1373,13 @@ void Problema_Vigas::resolver_linear() {
 		throw(-1);
 	}
 }
+
 void Problema_Vigas::revolver_ppl() {
 	//cplex.setParam(IloCplex::PreInd, 0); Desligar presolve(NAO FACA ISSO DE NOVO!)
 	relaxacaolinear = false;
 	cout << "Numero de padroes maximais: " << P_antigo << endl;
 	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 3600);
+	cplex.setParam(IloCplex::TiLim, 600);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
@@ -1551,9 +1390,9 @@ void Problema_Vigas::revolver_ppl() {
 
 void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	if (relaxacaolinear)
-		resultados << "	" << P_antigo << "	" << P << "	" << cplex.getObjValue();
+		resultados << P_antigo << "," << P << "," << cplex.getObjValue() << ",";
 	else
-		resultados << "	" << cplex.getObjValue() << "	" << cplex.getNnodes() << "	" << cplex.getMIPRelativeGap();
+		resultados << cplex.getObjValue() << "," << cplex.getMIPRelativeGap() << ",";
 
 	bool testes_em_massa = 1;
 	
@@ -1620,7 +1459,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 		for (int t = 0; t < T; t++)
 			for (int i = 1; i < P; i++)
 				if (maximal(Pattern[i], c_[m]) && cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1)) {
-					txtsolu << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[i].tipo].e - 0.01 << ",Type " << Pattern[i].tipo + 1 << endl;
+					txtsolu << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[i].tipo].tempo_cura - 0.01 << ",Type " << Pattern[i].tipo + 1 << endl;
 					usou = true;
 				}
 		if (!usou)
@@ -1692,7 +1531,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 
 	for (int c = 0; c < C; ++c) {
 		txtsolu << "Tipo " << c << endl;
-		for (int k_ = 0; k_ < Viga[c].k; k_++) {
+		for (int k_ = 0; k_ < Viga[c].n_comprimentos; k_++) {
 			int soma = 0;
 
 			for (int t = 0; t < T; t++)
@@ -1702,7 +1541,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 							if (maximal(Pattern[i], c_[m]))
 								if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1)
 									soma += Pattern[i].tamanhos[k_];
-			txtsolu << " " << soma - Viga[c].d[k_];
+			txtsolu << " " << soma - Viga[c].demandas[k_];
 		}
 		txtsolu << endl;
 	}
@@ -1711,7 +1550,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 		for (int m = 0; m < M; m++)
 			for (int i = 1; i < P; i++)
 				if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1)
-					sobra += Viga[Pattern[i].tipo].e * (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
+					sobra += Viga[Pattern[i].tipo].tempo_cura * (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
 	txtsolu << "\n sobra=" << sobra << endl;
 
 	sobra = 0;
@@ -1731,7 +1570,7 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 		for (int m = 0; m < M; m++) {
 			for (int i = 1; i < P; i++)
 				if (cplex.isExtracted(x[i][m][t]) && cplex.getValue(x[i][m][t]) == 1) {
-					for (int a = 0; a < Viga[Pattern[i].tipo].e; a++)
+					for (int a = 0; a < Viga[Pattern[i].tipo].tempo_cura; a++)
 						sobra_dia[t + a] += (c_[m] - Pattern[i].cap) * cplex.getValue(x[i][m][t]);
 				}
 		}
@@ -1754,8 +1593,8 @@ void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 bool Problema_Vigas::maximal(const Padrao P, double C_FORMA) {
 	//return true;
 	double menor = 10000;
-	for (int aux = 0; aux < Viga[P.tipo].k; aux++)
-		if (Viga[P.tipo].l[aux] < menor) menor = Viga[P.tipo].l[aux];
+	for (int aux = 0; aux < Viga[P.tipo].n_comprimentos; aux++)
+		if (Viga[P.tipo].comprimentos[aux] < menor) menor = Viga[P.tipo].comprimentos[aux];
 	//cout << "------" <<C_FORMA << " - " << P.cap << " < ? " << menor << endl;
 	return (C_FORMA - P.cap) < menor;
 
@@ -1774,8 +1613,8 @@ bool Problema_Vigas::verificacao() {
 			for (int i = 1; i < P; i++)
 				if (maximal(Pattern[i], c_[m]))
 					if (cplex.isExtracted(x[i][m][t]) && (cplex.getValue(x[i][m][t]) == 1))
-						if (Viga[Pattern[i].tipo].e > 1 && (t + Viga[Pattern[i].tipo].e) < T)
-							for (int a = 1; a < Viga[Pattern[i].tipo].e; a++)
+						if (Viga[Pattern[i].tipo].tempo_cura > 1 && (t + Viga[Pattern[i].tipo].tempo_cura) < T)
+							for (int a = 1; a < Viga[Pattern[i].tipo].tempo_cura; a++)
 								if (cplex.getValue(x[0][m][t + a]) != 1)
 									return false;
 
@@ -1800,18 +1639,18 @@ bool Problema_Vigas::verificacao() {
 	//Para cada tipo de viga e tamanhos dentro do tipo de viga
 	for (int c = 0; c < C; c++) {
 
-		for (int k = 0; k < Viga[c].k; k++) {
+		for (int k = 0; k < Viga[c].n_comprimentos; k++) {
 			int soma = 0;
 			//problema: alguns problemas não estão gerando padrões com a última demanda
 			for (int m = 0; m < M; ++m)
 				for (int i = 1; i < P; ++i)
-					for (int t = 0; t < T - Viga[Pattern[i].tipo].e + 1; ++t)
+					for (int t = 0; t < T - Viga[Pattern[i].tipo].tempo_cura + 1; ++t)
 						if (Pattern[i].cap <= c_[m] && Pattern[i].tipo == c && maximal(Pattern[i], c_[m]))
 							soma += Pattern[i].tamanhos[k] * cplex.getValue(x[i][m][t]);
 
 			//cout << "soma " << soma << " -- " << Viga[c].d[k] << endl;
 			//getchar();
-			if (soma < Viga[c].d[k])
+			if (soma < Viga[c].demandas[k])
 				return false;
 
 		}
@@ -1884,7 +1723,7 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados << std::setprecision(4);
 	resultados.open("resultados.txt", fstream::app);
 	resultados << endl;
-	resultados << instancia_nome << "\t";
+	resultados << instancia_nome << ",";
 	//try {
 	//	iniciar_variaveis();
 
@@ -1913,6 +1752,7 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados.close();
 	//env.end();
 	resultados.open("resultados.txt", fstream::app);
+	resultados << P_antigo << "," << P << "," << endl;
 
 	try {
 		iniciar_variaveis();
@@ -1926,7 +1766,7 @@ void Problema_Vigas::RODAR(int fo) {
 		chrono::duration<double> elapsed = TEMPO_FIM - TEMPO_COMECO;
 
 		imprimir_solucao(resultados);
-		resultados << "	" << elapsed.count();
+		resultados << elapsed.count() << ",";
 		cout << "\n\nTempo Resolucao do CPLEX gasto (Solucao Inteira): " << elapsed.count()
 			<< endl;
 	}
@@ -1997,7 +1837,7 @@ void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao
 	for (auto &elemento : solucao_heuristica) {
 		Matrix_X[elemento.FORMA][elemento.TEMPO] = elemento.PADRAO_OP.id;
 
-		for (int t = 1; t < Viga[elemento.PADRAO_OP.tipo].e; t++)
+		for (int t = 1; t < Viga[elemento.PADRAO_OP.tipo].tempo_cura; t++)
 			Matrix_X[elemento.FORMA][elemento.TEMPO + t] = 0;
 
 	}
@@ -2039,7 +1879,7 @@ void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao
 
 	for (int c = 0; c < C; ++c) {
 		txtsolu << "Tipo " << c << endl;
-		for (int k_ = 0; k_ < Viga[c].k; k_++) {
+		for (int k_ = 0; k_ < Viga[c].n_comprimentos; k_++) {
 			int soma = 0;
 
 			for (auto &elemento : solucao_heuristica) {
@@ -2047,7 +1887,7 @@ void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao
 					soma += elemento.PADRAO_OP.tamanhos[k_];
 			}
 
-			txtsolu << " " << soma - Viga[c].d[k_];
+			txtsolu << " " << soma - Viga[c].demandas[k_];
 		}
 		txtsolu << endl;
 	}
@@ -2058,7 +1898,7 @@ void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao
 	for (int t = 0; t < T_folgado; t++) {
 		for (int m = 0; m < M; m++)
 			if (Matrix_X[m][t] > 0)
-				sobra += Viga[Pattern[Matrix_X[m][t]].tipo].e * (c_[m] - Pattern[Matrix_X[m][t]].cap);
+				sobra += Viga[Pattern[Matrix_X[m][t]].tipo].tempo_cura * (c_[m] - Pattern[Matrix_X[m][t]].cap);
 	}
 	txtsolu << "\n sobra=" << sobra << endl;
 
@@ -2078,7 +1918,7 @@ void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao
 	for (int t = 0; t < T_folgado; t++) {
 		for (int m = 0; m < M; m++) {
 			if (Matrix_X[m][t] > 0) {
-				for (int a = 0; a < Viga[Pattern[Matrix_X[m][t]].tipo].e; a++)
+				for (int a = 0; a < Viga[Pattern[Matrix_X[m][t]].tipo].tempo_cura; a++)
 					sobra_dia[t + a] += (c_[m] - Pattern[Matrix_X[m][t]].cap);
 			}
 		}
@@ -2092,7 +1932,7 @@ void Problema_Vigas::function_Solucao_Arquivo_Heuristicas(list<OPERACAO> solucao
 		bool usou = false;
 		for (int t = 0; t < T; t++)
 			if (Matrix_X[m][t] > 0) {
-				txtsolu << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[Matrix_X[m][t]].tipo].e - 0.01
+				txtsolu << m + 1 << "," << t + 0.01 << "," << t + Viga[Pattern[Matrix_X[m][t]].tipo].tempo_cura - 0.01
 					<< ",Type " << Pattern[Matrix_X[m][t]].tipo + 1 << endl;
 				usou = true;
 			}

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Gerador_P.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OPERACAO.cpp" />
     <ClCompile Include="Padrao.cpp" />
@@ -26,6 +27,7 @@
     <ClCompile Include="Tipo_Viga.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Gerador_P.h" />
     <ClInclude Include="OPERACAO.h" />
     <ClInclude Include="Padrao.h" />
     <ClInclude Include="Problema_Vigas.h" />
@@ -146,33 +148,33 @@
     <ProjectGuid>{86D53EBE-C3D4-45CD-A6A1-CACD6860F9E0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>proj_cplex</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>cplex_vigas</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -225,17 +227,18 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>IL_STD;_DEBUG;_CONSOLE;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>
+      </Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;IL_STD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files\IBM\ILOG\CPLEX_Studio1271\cplex\include;C:\Program Files\IBM\ILOG\CPLEX_Studio1271\concert\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\IBM\ILOG\CPLEX_Studio1210\concert\include;C:\Program Files\IBM\ILOG\CPLEX_Studio1210\cpoptimizer\include;C:\Program Files\IBM\ILOG\CPLEX_Studio1210\cplex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\IBM\ILOG\CPLEX_Studio1271\cplex\lib\x64_windows_vs2015\stat_mdd;C:\Program Files\IBM\ILOG\CPLEX_Studio1271\concert\lib\x64_windows_vs2015\stat_mdd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cplex1271.lib;concert.lib;ilocplex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\IBM\ILOG\CPLEX_Studio1210\cpoptimizer\lib\x64_windows_msvc14\stat_mdd;C:\Program Files\IBM\ILOG\CPLEX_Studio1210\concert\lib\x64_windows_msvc14\stat_mdd;C:\Program Files\IBM\ILOG\CPLEX_Studio1210\cplex\lib\x64_windows_msvc14\stat_mdd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cplex12100.lib;ilocplex.lib;concert.lib;cp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

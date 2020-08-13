@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Tipo_Viga.h"
+#include <vector>
 using namespace std;
 
 
@@ -18,7 +19,7 @@ public:
 	int tipo;
 	int n_cobertos;
 	int k;
-	int *tamanhos;
+	vector<int> tamanhos;
 	double cap;
 	//Métodos
 

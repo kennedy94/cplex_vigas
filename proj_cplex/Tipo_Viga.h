@@ -1,12 +1,15 @@
 #pragma once
 #include <iostream>
+#include <vector>
 using namespace std;
 class Tipo_Viga {
 protected:
 	const Tipo_Viga &operator=(const Tipo_Viga &obj);
 	
 public:
-	int e, k;
-	double *l;
-	int *d;
+	int tempo_cura, n_comprimentos;
+	vector<double> comprimentos;
+	vector<int> demandas;
 };
+
+

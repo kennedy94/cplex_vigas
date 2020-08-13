@@ -4,16 +4,17 @@
 const Tipo_Viga & Tipo_Viga::operator=(const Tipo_Viga &obj) {
 	if (this == &obj) return *this;
 
-	delete l;
-	delete d;
+	comprimentos.clear();
+	demandas.clear();
 
-	e = obj.e;
-	k = obj.k;
+	tempo_cura = obj.tempo_cura;
+	n_comprimentos = obj.n_comprimentos;
 
-	l = new double[k];
-	d = new int[k];
+	comprimentos = vector<double>(n_comprimentos);
+	demandas = vector<int>(n_comprimentos);
 
-	memcpy(l, obj.l, sizeof(double) * k);
-	memcpy(d, obj.d, sizeof(int) * k);
+	comprimentos = obj.comprimentos;
+	demandas = obj.demandas;
+
 	return *this;
 }

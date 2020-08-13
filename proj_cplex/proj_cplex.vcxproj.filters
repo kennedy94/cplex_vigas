@@ -30,6 +30,9 @@
     <ClCompile Include="OPERACAO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Gerador_P.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Problema_Vigas.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OPERACAO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Gerador_P.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

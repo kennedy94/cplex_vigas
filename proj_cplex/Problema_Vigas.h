@@ -74,10 +74,6 @@ private:
 
 	void iniciar_lp(int fo, ofstream& resultados);
 
-
-
-	
-
 public:
 	void CALCULAR_LB();
 	void RODAR(int fo);
@@ -122,11 +118,6 @@ public:
 	list<OPERACAO> HEURISTIQUE_PLUS_VITE_ALTERNE();
 
 	void imprimir_resultados_heuristicas();
-
-
-
-
-
 
 
 	int get_P();

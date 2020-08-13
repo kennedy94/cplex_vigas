@@ -59,18 +59,16 @@ bool Padrao::contem(int tam) {
 void Padrao::alocar_PADRAO(int k, int tipo) {
 	this->k = k;
 	this->tipo = tipo;
-	tamanhos = new int[k];
-	for (int i = 0; i < k; i++)
-		tamanhos[i] = 0;
+	tamanhos = vector<int>(k, 0);
 
 }
 
 bool Padrao::comparar_demandas(const Tipo_Viga & c1)
 {
-	if (c1.k != k)	return false;
+	if (c1.n_comprimentos != k)	return false;
 
-	for (int i = 0; i < c1.k; i++) {
-		if (c1.d[i] > tamanhos[i])
+	for (int i = 0; i < c1.n_comprimentos; i++) {
+		if (c1.demandas[i] > tamanhos[i])
 			return false;
 		else
 			continue;
@@ -80,9 +78,9 @@ bool Padrao::comparar_demandas(const Tipo_Viga & c1)
 
 bool Padrao::comparar_demandas(const Tipo_Viga & c1, int IND_TAMANHO)
 {
-	if (c1.k != k)	return false;
+	if (c1.n_comprimentos != k)	return false;
 
-	if(c1.d[IND_TAMANHO] > tamanhos[IND_TAMANHO])
+	if(c1.demandas[IND_TAMANHO] > tamanhos[IND_TAMANHO])
 		return false;
 
 	return true;
