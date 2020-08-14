@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4996)
 #include <ilcp/cp.h>
 #include <fstream>
 #include <iostream>

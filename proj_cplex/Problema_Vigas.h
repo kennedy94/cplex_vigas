@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4996)
 #include "OPERACAO.h"
 #include "Padrao.h"
 #include "Tipo_Viga.h"

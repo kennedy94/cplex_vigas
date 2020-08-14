@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4996)
 #include <iostream>
 #include "Tipo_Viga.h"
 #include <vector>

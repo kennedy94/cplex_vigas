@@ -1722,7 +1722,6 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados << std::fixed;
 	resultados << std::setprecision(4);
 	resultados.open("resultados.txt", fstream::app);
-	resultados << endl;
 	resultados << instancia_nome << ",";
 	//try {
 	//	iniciar_variaveis();
@@ -1752,7 +1751,7 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados.close();
 	//env.end();
 	resultados.open("resultados.txt", fstream::app);
-	resultados << P_antigo << "," << P << "," << endl;
+	resultados << P_antigo << "," << P << ",";
 
 	try {
 		iniciar_variaveis();
@@ -1767,8 +1766,7 @@ void Problema_Vigas::RODAR(int fo) {
 
 		imprimir_solucao(resultados);
 		resultados << elapsed.count() << ",";
-		cout << "\n\nTempo Resolucao do CPLEX gasto (Solucao Inteira): " << elapsed.count()
-			<< endl;
+
 	}
 	catch (...) {
 		cerr << endl << "\n Erro na resolucao da inteira" << endl;

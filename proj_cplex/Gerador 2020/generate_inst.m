@@ -6,7 +6,7 @@
 %       Por padrão o tipo de viga i \in C terá tempo de cura i.
 %   limite_cura = tempo de cura maximo quando misturado for usado.
 %   up_d = limite superior de demandas
-function gerar_inst(C, M, arq, misturado, up_d)
+function gerar_inst(C, M, arq, misturado, down_d, up_d)
   pkg load statistics
     clc;
     %M = 7;
@@ -36,14 +36,14 @@ function gerar_inst(C, M, arq, misturado, up_d)
         tams = [1.15 2.5 2.9 3.05 3.1 3.2 3.65 3.8 3.95 4.05 4.35 4.6 5.05 5.6 5.7 5.95 6 6.45 6.65 6.9 7.15];
         %tam = unique(datasample(tams, length(tams)));
         tam = tams;
-        pegue_um_n = [5 6];
+        pegue_um_n = [4 5];
         peguei_um_n = randsample(pegue_um_n,1);
         tam = sort(randsample(tams,peguei_um_n,replacement=false));
         
         
         N = length(tam);
 
-        d = randi([ceil(up_d/3) up_d], 1, N);
+        d = randi([down_d up_d], 1, N);
         
         %estrutura usada para guardar dados do tipo gerado para a impressão
         s(i) = struct('cura', {cura},'n_tam', {N}, 'tamanhos', {tam}, 'demandas', {d});
