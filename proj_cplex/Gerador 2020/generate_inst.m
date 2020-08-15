@@ -51,16 +51,9 @@ function gerar_inst(C, M, arq, misturado, down_d, up_d)
         t = cura * sum(tam.*d) + t;
 	end
  
-	t = ceil(t/ sum(c));
-    %aumento de 10% no T
-    if t < 10
-      t = t + 1;
-    else
-      t = ceil(0.10 * t) + t;
-    end
+	t = ceil(t/ sum(c)) * 2;
 
- 
-    %impressão dos dados
+  %impressão dos dados
 	inst2 = fopen(arq, 'w');
 	fprintf(inst2, '%d \n%d \n%d\n \n', C, M, t);
 	for i = 1:C

@@ -1176,16 +1176,15 @@ void Problema_Vigas::restricoes_onlyone() {
 	//para cada forma m e periodo de tempo t
 	for (m = 0; m < M; m++) {
 		for (t = 0; t < T; t++) {
-			//IloExpr expr(env);
-			IloNumVarArray auxiliar(env);
+			IloExpr expr(env);
 
-			auxiliar.add(x[0][m][t]);
+			expr += x[0][m][t];
 			for (i = 1; i < P; i++) {
 				if ((Pattern[i].cap <= c_[m]) && maximal(Pattern[i], c_[m])) {
-					auxiliar.add(x[i][m][t]);
+					expr += x[i][m][t];
 				}
 			}
-			model.add(IloSOS1(env, auxiliar)).setName("Um Padrao");
+			model.add(expr <= 1 ).setName("Um Padrao");
 		}
 	}
 }
@@ -1356,18 +1355,22 @@ void Problema_Vigas::exportar_lp() {
 
 void Problema_Vigas::resolver_linear() {
 	relaxacaolinear = true;
-	IloModel relax(env);
-	relax.add(model);
+
 	for (IloInt i = 0; i < P; i++) {
 		for (IloInt m = 0; m < M; m++) {
-			relax.add(IloConversion(env, x[i][m], ILOFLOAT));
+			for (IloInt t = 0; t < T; t++) {
+				model.add(IloConversion(env, x[i][m][t], ILOFLOAT));
+			}
 		}
 	}
 
-	relax.add(IloConversion(env, z, ILOFLOAT));
+	for (IloInt t = 0; t < T; t++){
+		model.add(IloConversion(env, z[t], ILOFLOAT));
+	}
+	
 
-	cplex = IloCplex(relax);
-	//exportar_lp();
+	cplex = IloCplex(model);
+	cplex.setParam(IloCplex::TiLim, 1800);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
 		throw(-1);
@@ -1377,9 +1380,8 @@ void Problema_Vigas::resolver_linear() {
 void Problema_Vigas::revolver_ppl() {
 	//cplex.setParam(IloCplex::PreInd, 0); Desligar presolve(NAO FACA ISSO DE NOVO!)
 	relaxacaolinear = false;
-	cout << "Numero de padroes maximais: " << P_antigo << endl;
-	cout << "Numero de padroes maximais que cobrem todos: " << P << endl << endl;
-	cplex.setParam(IloCplex::TiLim, 600);
+
+	cplex.setParam(IloCplex::TiLim, 1800);
 	//cplex.setParam(IloCplex::Param::MIP::Cuts::Cliques, -1);
 	if (!cplex.solve()) {
 		env.error() << "Otimizacao do LP mal-sucedida." << endl;
@@ -1390,9 +1392,9 @@ void Problema_Vigas::revolver_ppl() {
 
 void Problema_Vigas::imprimir_solucao(ofstream& resultados) {
 	if (relaxacaolinear)
-		resultados << P_antigo << "," << P << "," << cplex.getObjValue() << ",";
+		resultados << cplex.getObjValue() << ",";
 	else
-		resultados << cplex.getObjValue() << "," << cplex.getMIPRelativeGap() << ",";
+		resultados << cplex.getObjValue() << "," << cplex.getMIPRelativeGap() << "," << cplex.getObjective() << ",";
 
 	bool testes_em_massa = 1;
 	
@@ -1723,35 +1725,31 @@ void Problema_Vigas::RODAR(int fo) {
 	resultados << std::setprecision(4);
 	resultados.open("resultados.txt", fstream::app);
 	resultados << instancia_nome << ",";
-	//try {
-	//	iniciar_variaveis();
+	/*try {
+		iniciar_variaveis();
 
-	//	
-	//	
+		iniciar_lp(fo, resultados);
+		//exportar_lp();                   //criar arquivo .lp
+		cout << "\n\n\nResolvendo Linear... \n\n";
+	
+		auto TEMPO_COMECO = chrono::high_resolution_clock::now();
+		resolver_linear();                    //resolver problema
+		auto TEMPO_FIM = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed = TEMPO_FIM - TEMPO_COMECO;
 
-	//	iniciar_lp(fo, resultados);
-	//	//exportar_lp();                   //criar arquivo .lp
-	//	cout << "\n\n\nResolvendo Linear... \n\n";
-	//
-	//	auto TEMPO_COMECO = chrono::high_resolution_clock::now();
-	//	resolver_linear();                    //resolver problema
-	//	auto TEMPO_FIM = chrono::high_resolution_clock::now();
-	//	chrono::duration<double> elapsed = TEMPO_FIM - TEMPO_COMECO;
-	//	cout << "\n\nTempo Resolucao do CPLEX gasto (Linear): " << elapsed.count()
-	//		<< endl;
-
-	//	imprimir_solucao(resultados);
-	//	resultados << "	" << elapsed.count();
-	//}
-	//catch (...) {
-	//	cerr << endl << "\n Erro na resolucao da linear" << endl;
-	//}
+		imprimir_solucao(resultados);
+		resultados << cplex.getObjValue() << "," << elapsed.count() << "," << cplex.getStatus();
+	}
+	catch (...) {
+		cerr << endl << "\n Erro na resolucao da linear" << endl;
+	}
+	*/
 
 
 	resultados.close();
 	//env.end();
-	resultados.open("resultados.txt", fstream::app);
-	resultados << P_antigo << "," << P << ",";
+	
+	//resultados << P_antigo << "," << P << ",";
 
 	try {
 		iniciar_variaveis();
@@ -1764,14 +1762,16 @@ void Problema_Vigas::RODAR(int fo) {
 		auto TEMPO_FIM = chrono::high_resolution_clock::now();
 		chrono::duration<double> elapsed = TEMPO_FIM - TEMPO_COMECO;
 
-		imprimir_solucao(resultados);
-		resultados << elapsed.count() << ",";
+		resultados.open("resultados.txt", fstream::app);
+		resultados << cplex.getObjValue() << "," << cplex.getMIPRelativeGap() << "," << elapsed.count();
 
 	}
 	catch (...) {
 		cerr << endl << "\n Erro na resolucao da inteira" << endl;
 	}
 
+
+	resultados << "," << cplex.getBestObjValue();
 
 	resultados << endl;
 

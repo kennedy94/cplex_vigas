@@ -98,7 +98,6 @@ rodar_cplex_fo1.exe hbp5_30_7
 rodar_cplex_fo1.exe hbp5_30_8
 rodar_cplex_fo1.exe hbp5_30_9
 rodar_cplex_fo1.exe hbp5_30_10
-
 rodar_cplex_fo2.exe hbp1_15_1
 rodar_cplex_fo2.exe hbp1_15_2
 rodar_cplex_fo2.exe hbp1_15_3
@@ -199,7 +198,6 @@ rodar_cplex_fo2.exe hbp5_30_7
 rodar_cplex_fo2.exe hbp5_30_8
 rodar_cplex_fo2.exe hbp5_30_9
 rodar_cplex_fo2.exe hbp5_30_10
-
 rodar_cplex_fo3.exe hbp1_15_1
 rodar_cplex_fo3.exe hbp1_15_2
 rodar_cplex_fo3.exe hbp1_15_3
